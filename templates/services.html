@@ -1,0 +1,44 @@
+<!-- templates/services.html -->
+{% extends 'base.html' %}
+
+{% block title %}Baitech Services{% endblock %}
+
+{% block content %}
+  <section class="container">
+    <h2>🛠️ Our Services</h2>
+    <div class="services-grid">
+      {% for service in categories %}
+        <div class="service-card">
+          <h3>{{ service.name }}</h3>
+          <p>{{ service.description }}</p>
+          <p><strong>Category:</strong> {{ service.category }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="container">
+    <h3>Request a Service</h3>
+    <form id="serviceForm">
+      <input type="text" name="customer_name" placeholder="Full Name" required>
+      <input type="text" name="contact" placeholder="Phone or Email" required>
+
+      <select name="service_type" required>
+        <option value="">-- Select a Service Category --</option>
+        {% for service in categories %}
+          <option value="{{ service.name }}">{{ service.name }}</option>
+        {% endfor %}
+      </select>
+
+      <input type="text" name="item" placeholder="Item (optional)">
+      <textarea name="description" placeholder="Describe the issue..." required></textarea>
+      <button type="submit">Submit Request</button>
+    </form>
+    <div id="serviceResponse"></div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/service.js"></script>
+  <script src="/static/carousel.js"></script>
+{% endblock %}

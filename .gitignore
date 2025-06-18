@@ -1,2 +1,7 @@
 env/
 __pycache__/
+seed_service.py
+insert_p.py
+.dockerignore
+featuredmark.py
+

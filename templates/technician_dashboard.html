@@ -1,0 +1,41 @@
+<!-- templates/technician_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Technician Dashboard | Baitech{% endblock %}
+
+{% block content %}
+  <h2>🧰 Technician Dashboard</h2>
+
+  <section class="dashboard-section">
+    <h3>Assigned Tasks</h3>
+    {% if tasks %}
+      <table>
+        <thead>
+          <tr><th>Service Type</th><th>Customer</th><th>Contact</th><th>Description</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {% for task in tasks %}
+          <tr>
+            <td>{{ task.service_type }}</td>
+            <td>{{ task.customer_name }}</td>
+            <td>{{ task.contact }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.status }}</td>
+            <td>
+              {% if task.status != "Completed" %}
+                <form method="post" action="/services/complete/{{ task._id }}">
+                  <button type="submit">Mark Completed</button>
+                </form>
+              {% else %}
+                ✅
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No assigned tasks yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}

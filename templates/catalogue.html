@@ -1,0 +1,49 @@
+<!-- templates/catalogue.html -->
+{% extends 'base.html' %}
+
+{% block title %}Product Catalogue{% endblock %}
+
+{% block content %}
+  <section class="container">
+    <h2>🛒 All Products</h2>
+
+    <form method="get" action="/catalogue" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+      <input type="text" name="search" placeholder="Search products..." value="{{ request.query_params.get('search', '') }}">
+      <select name="category">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if request.query_params.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Filter</button>
+    </form>
+
+    <div class="products-grid">
+      {% for product in products %}
+        <div class="product-card">
+          <div class="image-carousel">
+            {% for image in product.images %}
+              <img src="{{ image }}" alt="{{ product.name }}" class="carousel-image">
+            {% endfor %}
+          </div>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p>Ksh {{ product.price }}</p>
+            <p>{{ product.description }}</p>
+            <ul>
+              {% for feature in product.features %}
+                <li>{{ feature }}</li>
+              {% endfor %}
+            </ul>
+            <button onclick="addToCart('{{ product.product_id }}', '{{ product.name }}', {{ product.price }})">Add to Cart</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/cart.js"></script>
+  <script src="/static/carousel.js"></script>
+{% endblock %}

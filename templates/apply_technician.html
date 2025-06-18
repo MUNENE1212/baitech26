@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Technician Application{% endblock %}
+
+{% block content %}
+  <h1>🔧 Baitech Technician Application Form</h1>
+  <form method="post" action="/apply-technician">
+    <input type="text" name="full_name" placeholder="Full Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="text" name="phone_number" placeholder="Phone Number" required>
+    <input type="text" name="skills" placeholder="Skills" required>
+    <input type="number" name="experience_years" placeholder="Years of Experience" required>
+    <button type="submit">Submit Application</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/apply-technician.js"></script>
+{% endblock %}

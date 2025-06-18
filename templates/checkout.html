@@ -1,0 +1,31 @@
+<!-- templates/checkout.html -->
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+  <h2>Your Cart</h2>
+  <table>
+    <thead>
+      <tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th>Remove</th></tr>
+    </thead>
+    <tbody id="cartTableBody"></tbody>
+  </table>
+  <h3 id="cartTotal">Total: Ksh 0</h3>
+
+  <h2>Customer Information</h2>
+  <form id="checkoutForm">
+    <input type="text" name="customer_name" placeholder="Your Name" required>
+    <input type="text" name="contact" placeholder="Phone or Email" required>
+    <textarea name="notes" placeholder="Additional notes (optional)"></textarea>
+    <button type="submit">Place Order</button>
+  </form>
+
+  <div id="checkoutMessage"></div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/cart.js"></script>
+  <script src="/static/checkout.js"></script>
+  <script src="/static/carousel.js"></script>
+{% endblock %}
