@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from database import db
-from models import Technician, ServiceRequest, TechnicianRating
+from utils.database import db
+from utils.models import Technician, ServiceRequest, TechnicianRating
 from bson import ObjectId
 from datetime import datetime
 

@@ -1,10 +1,10 @@
 from fastapi import FastAPI, HTTPException, Depends, APIRouter, Request
 from fastapi.responses import RedirectResponse
-from database import db
+from utils.database import db
 from bson import ObjectId
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from auth import verify_password, get_current_user,require_role
+from utils.auth import verify_password, get_current_user,require_role
 from utils.security import hash_password, create_access_token
 from routes.product_routes import router as product_router
 from routes.services_routes import router as service_router
@@ -12,7 +12,7 @@ from routes.order_routes import router as order_router
 from routes.technician_routes import router as technician_router
 from routes.auth_routes import router as auth_router
 from datetime import datetime
-from models import User, UserLogin
+from utils.models import User, UserLogin
 
 app = FastAPI()
 

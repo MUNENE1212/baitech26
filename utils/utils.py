@@ -1,5 +1,5 @@
 from datetime import datetime
-from database import db
+from utils.database import db
 
 async def generate_order_number():
     today = datetime.utcnow().strftime("%d-%m-%y")

@@ -25,7 +25,7 @@
             {% for image in product.images %}
               <img src="{{ image }}" alt="{{ product.name }}" class="carousel-image">
             {% endfor %}
-          </div>
+          </div>/home/munen/newbaitech
           <div class="product-info">
             <h3>{{ product.name }}</h3>
             <p>Ksh {{ product.price }}</p>
@@ -44,6 +44,6 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="/static/cart.js"></script>
-  <script src="/static/carousel.js"></script>
+  <script src="/static/js/cart.js"></script>
+  <script src="/static/js/carousel.js"></script>
 {% endblock %}

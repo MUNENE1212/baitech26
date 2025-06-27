@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from models import Order
-from database import db
+from utils.models import Order
+from utils.database import db
 from utils.utils import generate_order_number
 
 router = APIRouter()

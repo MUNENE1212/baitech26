@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import Security, HTTPException, Depends
 from fastapi.security import HTTPBearer, OAuth2PasswordBearer
-from database import db
+from utils.database import db
 from utils.security import verify_password
 
 load_dotenv()

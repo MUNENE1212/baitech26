@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from database import db
-from models import Product
-from auth import get_current_user
+from utils.database import db
+from utils.models import Product
+from utils.auth import get_current_user
 from bson import ObjectId
 
 router = APIRouter()

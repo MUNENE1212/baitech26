@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 from datetime import timedelta
 
-from database import db
-from auth import authenticate_user
+from utils.database import db
+from utils.auth import authenticate_user
 from utils.security import create_access_token,hash_password
 from bson.objectid import ObjectId
 
