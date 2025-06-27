@@ -5,3 +5,4 @@ insert_p.py
 .dockerignore
 featuredmark.py
 .env
+venv/
