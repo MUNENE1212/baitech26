@@ -7,7 +7,7 @@ app = FastAPI()
 
 load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URL")
 MONGO_DB = os.getenv("MONGO_DB")
 
 client = AsyncIOMotorClient(MONGO_URI)
