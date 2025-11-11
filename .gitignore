@@ -12,10 +12,19 @@ ENV/
 env.bak/
 venv.bak/
 
-# Environment variables
+# Environment variables - NEVER COMMIT THESE!
 .env
 .env.local
-.env.*.local
+.env.production
+.env.production.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+# BUT allow example files (templates)
+!.env.example
+!.env*.example
+!*/.env*.example
 
 # IDEs
 .vscode/
@@ -33,6 +42,9 @@ venv.bak/
 # Logs
 *.log
 logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Testing
 .pytest_cache/
@@ -44,16 +56,38 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+.next/
+out/
 
 # Docker
 .dockerignore
 
-# Temporary files and scripts (optional - remove if needed for production)
-seed_service.py
-seed_services.py
-insert_p.py
-featuredmark.py
+# Deployment sensitive files
+backups/
+*.tar.gz
+ecosystem.config.js.local
+
+# Temporary and sensitive scripts
+scripts/setup/setup_admin.py
+scripts/dev/*.pyc
 
 # OS files
 Thumbs.db
 .DS_Store
+
+# Image backups
+images_backup/
+
+# Node modules
+node_modules/
+baitech-frontend/node_modules/
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+
+# Backup files
+*.bak
+*.backup

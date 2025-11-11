@@ -44,13 +44,16 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   return (
     <div className="group relative h-full w-full overflow-hidden rounded-lg">
       {/* Main Image */}
-      <div className="relative h-full w-full">
+      <div className="relative h-full w-full bg-gray-100">
         <Image
           src={images[currentIndex]}
           alt={`${alt} - Image ${currentIndex + 1}`}
           fill
           className="object-cover transition-opacity duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          loading={currentIndex === 0 ? "eager" : "lazy"}
+          priority={currentIndex === 0}
+          quality={85}
         />
       </div>
 

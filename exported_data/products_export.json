@@ -1,0 +1,432 @@
+[
+  {
+    "_id": "684c7bb354380f8819f6aca7",
+    "product_id": "SW2P001",
+    "name": "CElebrat SW2pro Multifunctional Smart Watch",
+    "description": "This device features a 1.83-inch TFT touch screen with a resolution of 240x280, offering a clear and responsive display. It is IP56 water-resistant, providing protection against dust and water splashes. Powered by the AB8918B CPU with 32MB ROM, it supports Bluetooth 5.0 connectivity, including call functionality. The battery has a capacity of 190mAh, delivering a battery life of 7 to 15 days, and supports magnetic charging with a full charge time of approximately 2 hours. The device also includes a range of health and fitness features, such as female physiological cycle recording, multiple exercise modes, and heart rate monitoring. Additionally, it supports multiple languages, making it accessible to a diverse range of users.",
+    "features": [
+      "Smart call watch",
+      "1.83 inch center large screen shocking vision",
+      "AI intelligent voice",
+      "Magnetic charging",
+      "Select button easy control interface",
+      "Bluetooth call",
+      "Guard health all day 24-hour monitoring",
+      "Multiple movement modes",
+      "View social information synchronously"
+    ],
+    "price": 2999,
+    "category": "Smart Watches",
+    "stock": 30,
+    "images": [
+      "/static/images/sw2pro_1.jpg",
+      "/static/images/sw2pro_2.jpg",
+      "/static/images/sw2pro_3.jpg"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "684c7bb354380f8819f6aca8",
+    "product_id": "SW13002",
+    "name": "Celebrat SW-13 Multi-Function Smart Watch",
+    "description": "This smart device offers a perfect blend of style, functionality, and convenience. It supports multiple sports modes and health management features to help you stay on top of your fitness goals, along with Bluetooth calling for hands-free communication. With easy touch controls, you can play or skip songs, answer or hang up calls, and manage functions effortlessly—all with a tap of your fingertips. The package includes three interchangeable straps, allowing you to switch up your look daily and express your unique style on any occasion.",
+    "features": [
+      "21 National Speech Languages Supported",
+      "Multiple Sports Modes",
+      "Health Management Functions",
+      "Bluetooth Call Support",
+      "Touch Controls for music and calls",
+      "Includes Three Swappable Straps"
+    ],
+    "price": 3499,
+    "category": "Smart Watches",
+    "stock": 30,
+    "images": [
+      "/static/images/sw13_1.jpg",
+      "/static/images/sw13_2.jpg",
+      "/static/images/sw13_3.jpg"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "684c7bb354380f8819f6aca9",
+    "product_id": "MIC001",
+    "name": "Wireless Bluetooth K9 Microphone",
+    "description": "Omnidirectional Pickup High Density Spray-proof Sponges used with these High-sensitivite Microphones enable 360-degree sound reception within the distance of 50ft. Wide Compatibility as works with androids 6.0 or above with USB C interface ( Type C interface), Laptops or personal computers with USB A or USB C interface. Intelligent Noise Reduction.These high sensitive mics reduces the interference of the surrounding environment so as to provide professional clean and clear audio. Supports Various Softwares Designed for Facebook, YouTube, TikTok, Zoom Conference, Interview, Podcast, Vlog, e.t.c.",
+    "features": [
+      "No APP or Bluetooth is needed Plug and Play",
+      "Easy to Use Small",
+      "Lightweight and Portable",
+      "Only 0.009s Delay in Transmission",
+      "65FT Audio Range & 6H Working Time Wide Versatilit",
+      "Compatibility Real-time Clear Voice Auto-Syncs",
+      "2 x Transmitters with Back Clip",
+      "1 x Receiver with USB C Plug",
+      "1 x Type C Charging Cable"
+    ],
+    "price": 1499,
+    "category": "Audio Accessories",
+    "stock": 30,
+    "images": [
+      "/static/images/k9mic_1.jpg",
+      "/static/images/k9mic_2.jpg",
+      "/static/images/k9mic_3.jpg"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "684c7bb354380f8819f6acaa",
+    "product_id": "MIC002",
+    "name": "3 in 1 Plug and Play Microphone",
+    "description": "Introducing the 3-in-1 Wireless Lavalier Microphone – K15, the ultimate audio solution for content creators, professionals, and enthusiasts alike. Designed with versatility and convenience in mind, this cutting-edge microphone offers professional-quality sound for mobile phones, compatibility with Type-C mobile devices, and a wireless lapel for cameras. Whether you’re vlogging, conducting interviews, or giving presentations, the 3-in-1 Wireless Lavalier Microphone – K15 ensures your audio is crisp, clear, and reliable.",
+    "features": [
+      "Professional quality for mobile phone",
+      "Wireless microphone lapel for camera",
+      "Compatible with Type-C mobile devices",
+      "High-fidelity sound recording",
+      "Easy to use and set up",
+      "Compact and lightweight design",
+      "Long battery life for extended use",
+      "Ideal for vlogging, interviews, and presentations",
+      "Noise cancellation feature",
+      "Durable and reliable build"
+    ],
+    "price": 2499,
+    "category": "Audio Accessories",
+    "stock": 30,
+    "images": [
+      "/static/images/k15mic_1.jpg",
+      "/static/images/k15mic_2.jpg",
+      "/static/images/k15mic_3.jpg"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "684c7bb354380f8819f6acab",
+    "product_id": "KEY001",
+    "name": "Flexible Keyboard",
+    "description": "Designed to meet the needs of modern users, this innovative keyboard combines functionality with convenience, making it an essential tool for anyone looking to enhance their computing experience. Whether you’re a frequent traveler, a tech enthusiast, or someone who values space-saving solutions, our flexible keyboard is the perfect addition to your setup.",
+    "features": [
+      "Flexible and Portable Design",
+      "Easy to clean and maintain",
+      "Superior typing experience",
+      "Compartible and versatile",
+      "Durable and Reliable build",
+      "Ideal for Travelers and Tech Enthusiasts",
+      "Aesthetically pleasing design"
+    ],
+    "price": 1499,
+    "category": "Computer Accessories",
+    "stock": 30,
+    "images": [
+      "/static/images/flexkey_1.jpg",
+      "/static/images/flexkey_2.jpg",
+      "/static/images/flexkey_3.jpg"
+    ]
+  },
+  {
+    "_id": "684c7bb354380f8819f6acac",
+    "product_id": "PHH001",
+    "name": "Car Phone Holder",
+    "description": "The Car Phone Holder is a versatile and convenient device that allows you to securely hold your phone in your car. It is designed with a flexible design, making it easy to carry and use. The holder is compatible with most Bluetooth devices, allowing for easy pairing and connection. It also includes a range of features, such as noise cancellation, echo cancellation, and echo suppression, to ensure clear and high-quality audio. The holder is powered by a rechargeable battery, providing up to 8 hours of continuous use.",
+    "features": [
+      "Universal Compatibility",
+      "One button control",
+      "Convenient beautiful design",
+      "Locking is not easy to fall off"
+    ],
+    "price": 1999,
+    "category": "Phone Accessories",
+    "stock": 30,
+    "images": [
+      "/static/images/carholder_1.jpg",
+      "/static/images/carholder_2.jpg",
+      "/static/images/carholder_3.jpg"
+    ]
+  },
+  {
+    "_id": "684c7bb354380f8819f6acad",
+    "product_id": "PHS001",
+    "name": "Phone Stand",
+    "description": "The Phone Stand is a versatile and convenient device that allows you to securely hold your phone. It is designed with a flexible design, making it easy to carry and use.",
+    "features": [
+      "Adjustable viewing angles",
+      "Portable and lightweight",
+      "Easy to use and set up",
+      "Durable and reliable build",
+      "Ideal for travelers and tech enthusiasts",
+      "Aesthetically pleasing design",
+      "Universal compatibility"
+    ],
+    "price": 799,
+    "category": "Phone Accessories",
+    "stock": 30,
+    "images": [
+      "/static/images/phonestand_1.jpg",
+      "/static/images/phonestand_2.jpg",
+      "/static/images/phonestand_3.jpg"
+    ]
+  },
+  {
+    "_id": "684c7bb354380f8819f6acae",
+    "product_id": "CHG001",
+    "name": "Laptop USB C Chargers 65W",
+    "description": "The Laptop USB C Chargers 65W are a versatile and convenient device that allows you to charge your laptop. It is designed with a flexible design, making it easy to carry and use.",
+    "features": [
+      "65W USB-C Power Delivery",
+      "Fast Charging for Laptops",
+      "Compact and Portable Design",
+      "Universal Compatibility",
+      "Ideal for Travelers and Tech Enthusiasts",
+      "Aesthetically pleasing design"
+    ],
+    "price": 1999,
+    "category": "Chargers",
+    "stock": 30,
+    "images": [
+      "/static/images/charger65w_1.jpg",
+      "/static/images/charger65w_2.jpg",
+      "/static/images/charger65w_3.jpg"
+    ]
+  },
+  {
+    "_id": "684c7bb354380f8819f6acaf",
+    "product_id": "CHG002",
+    "name": "Laptop USB C Chargers 45W",
+    "description": "The Laptop USB C Chargers 45W are a versatile and convenient device that allows you to charge your laptop. It is designed with a flexible design, making it easy to carry and use.",
+    "features": [
+      "45W USB-C Power Delivery",
+      "Fast Charging for Laptops",
+      "Compact and Portable Design",
+      "Universal Compatibility",
+      "Ideal for Travelers and Tech Enthusiasts",
+      "Aesthetically pleasing design"
+    ],
+    "price": 1499,
+    "category": "Chargers",
+    "stock": 30,
+    "images": [
+      "/static/images/charger45w_1.jpg",
+      "/static/images/charger45w_2.jpg",
+      "/static/images/charger45w_3.jpg"
+    ]
+  },
+  {
+    "_id": "685041c8346d614a14995754",
+    "product_id": "ANYCASTM9",
+    "name": "AnyCast M9 WiFi Display Dongle",
+    "description": "Wireless display dongle that mirrors your phone/tablet/PC screen to TV via WiFi. Supports 1080p HD streaming.",
+    "features": [
+      "Wireless screen mirroring",
+      "Supports Android/iOS/Windows",
+      "1080p Full HD",
+      "Plug-and-play"
+    ],
+    "price": 1999,
+    "stock": 35,
+    "category": "Streaming Devices",
+    "images": [
+      "/static/images/anycast_1.png"
+    ],
+    "featured": false
+  },
+  {
+    "_id": "685041c8346d614a14995755",
+    "product_id": "RX08BTSPK",
+    "name": "RX08 Portable Wireless Bluetooth Speaker",
+    "description": "Compact waterproof Bluetooth speaker with LED lights and 12-24h playtime.",
+    "features": [
+      "Bluetooth 5.0",
+      "IPX5 waterproof",
+      "360° sound",
+      "LED lights"
+    ],
+    "price": 1499,
+    "stock": 120,
+    "category": "Portable Audio",
+    "images": [
+      "/static/images/rx08_1.png",
+      "/static/images/rx08_2.png"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "685041c8346d614a14995756",
+    "product_id": "RX09BTSPK",
+    "name": "RX09 15W Portable Bluetooth Speaker",
+    "description": "High-power 15W speaker with RGB lighting, IPX6 rating, and TWS pairing.",
+    "features": [
+      "15W output",
+      "Bluetooth 5.1",
+      "IPX6 waterproof",
+      "RGB lights",
+      "TWS pairing"
+    ],
+    "price": 1899,
+    "stock": 85,
+    "category": "Portable Audio",
+    "images": [
+      "/static/images/rx09_1.png",
+      "/static/images/rx09_2.png",
+      "/static/images/rx09_2.png"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "685041c8346d614a14995757",
+    "product_id": "3IN1HDTV-KE",
+    "name": "3-in-1 HDTV Cable (HDMI+VGA+AV)",
+    "description": "Universal converter cable for connecting devices to TVs/projectors.",
+    "features": [
+      "HDMI+VGA+AV",
+      "1080p HD",
+      "Gold-plated connectors",
+      "6ft cable"
+    ],
+    "price": 799,
+    "stock": 200,
+    "category": "Cables & Adapters",
+    "images": [
+      "/static/images/3in1hd_1.png",
+      "/static/images/3in1hd_2.png"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "685041c8346d614a14995758",
+    "product_id": "CHROMECAST-HD",
+    "name": "Google Chromecast HDMI Streaming Device",
+    "description": "Stream content from your phone/laptop to TV in HD.",
+    "features": [
+      "1080p HD",
+      "Works with Android/iOS/PC",
+      "Voice control",
+      "Screen mirroring"
+    ],
+    "price": 2499,
+    "stock": 30,
+    "category": "Streaming Devices",
+    "images": [
+      "/static/images/chromecast_2.png"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "685041c8346d614a14995759",
+    "product_id": "USBWIFI600",
+    "name": "600Mbps USB Wi-Fi Dongle with Antenna",
+    "description": "High-speed wireless adapter for PCs/laptops.",
+    "features": [
+      "600Mbps speed",
+      "5dBi antenna",
+      "USB 2.0",
+      "Windows support"
+    ],
+    "price": 1599,
+    "stock": 150,
+    "category": "Networking",
+    "images": [
+      "/static/images/wifi-dongle_1.png"
+    ],
+    "featured": false
+  },
+  {
+    "_id": "685041c8346d614a1499575a",
+    "product_id": "SAM25W-A15",
+    "name": "Samsung 25W Fast Charger Adapter",
+    "description": "Original Samsung fast charger for Galaxy series.",
+    "features": [
+      "25W Super Fast Charging",
+      "Type-C output",
+      "PPS support",
+      "Compact design"
+    ],
+    "price": 999,
+    "stock": 80,
+    "category": "Mobile Accessories",
+    "images": [
+      "/static/images/sam25wpd.png",
+      "/static/images/sam25wpd_2.png"
+    ],
+    "featured": false
+  },
+  {
+    "_id": "685041c8346d614a1499575b",
+    "product_id": "SAM45W-PD",
+    "name": "Samsung 45W PD Adapter",
+    "description": "Premium 45W charger for Galaxy S23 Ultra/Note series.",
+    "features": [
+      "45W Super Fast Charging",
+      "USB PD 3.0",
+      "5A support",
+      "Foldable plug"
+    ],
+    "price": 1999,
+    "stock": 45,
+    "category": "Mobile Accessories",
+    "images": [
+      "/static/images/sam45wpd_1.png"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "685041c8346d614a1499575c",
+    "product_id": "BT51-DONGLE",
+    "name": "Bluetooth 5.1 USB Dongle",
+    "description": "Wireless adapter for PCs/laptops.",
+    "features": [
+      "Bluetooth 5.1",
+      "10m range",
+      "Plug-and-play",
+      "Nano-sized"
+    ],
+    "price": 899,
+    "stock": 200,
+    "category": "Computer Accessories",
+    "images": [
+      "/static/images/btusb5.1_1.jpg"
+    ],
+    "featured": false
+  },
+  {
+    "_id": "685041c8346d614a1499575d",
+    "product_id": "S450BTSPK",
+    "name": "S450 Professional Bluetooth Audio Speaker",
+    "description": "High-power portable PA system with dual wireless mics.",
+    "features": [
+      "1000W peak power",
+      "Bluetooth 5.0",
+      "UHF wireless mics",
+      "RGB lights"
+    ],
+    "price": 3499,
+    "stock": 25,
+    "category": "Portable Audio",
+    "images": [
+      "/static/images/s450_1.png",
+      "/static/images/s450_2.png",
+      "/static/images/s450_3.png"
+    ],
+    "featured": true
+  },
+  {
+    "_id": "685041c8346d614a1499575e",
+    "product_id": "P-SERIES-BT",
+    "name": "P-Series Portable Bluetooth Speaker",
+    "description": "High-fidelity wireless speaker with enhanced bass and durable design.",
+    "features": [
+      "Bluetooth 5.0",
+      "IPX5 waterproof",
+      "20W output",
+      "24h playtime"
+    ],
+    "price": 1599,
+    "stock": 100,
+    "category": "Portable Audio",
+    "images": [
+      "/static/images/68D_1.png",
+      "/static/images/68D.png"
+    ],
+    "featured": false
+  }
+]

@@ -14,6 +14,10 @@ class UserCreate(BaseModel):
     email: str
     password: str
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -42,13 +46,18 @@ async def register_user(user: UserCreate):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/login/", response_model=Token)
-async def login_user(email: str, password: str):
-    user = await authenticate_user(email, password)
+async def login_user(credentials: UserLogin):
+    user = await authenticate_user(credentials.email, credentials.password)
     if not user:
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
+    # Include role in the token
     access_token = create_access_token(
-        data={"sub": user['email']},
+        data={
+            "sub": user['email'],
+            "email": user['email'],
+            "role": user.get('role', 'customer')
+        },
         expires_delta=timedelta(minutes=30)
     )
 

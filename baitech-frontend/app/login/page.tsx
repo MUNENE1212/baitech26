@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
-import { toast } from 'sonner'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -20,44 +19,48 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/login/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-          username: formData.email,
+        body: JSON.stringify({
+          email: formData.email,
           password: formData.password,
         }),
-        credentials: 'include',
       })
 
       if (response.ok) {
         const data = await response.json()
-        toast.success('Login successful!', {
-          description: 'Redirecting to dashboard...',
-        })
 
-        // Store token if needed
+        // Store token and user info
         if (data.access_token) {
-          localStorage.setItem('access_token', data.access_token)
-        }
+          localStorage.setItem('token', data.access_token)
 
-        // Redirect based on user role
-        setTimeout(() => {
-          router.push('/')
-        }, 1000)
+          // Decode token to get user role (basic JWT decode)
+          try {
+            const payload = JSON.parse(atob(data.access_token.split('.')[1]))
+            if (payload.role) {
+              localStorage.setItem('userRole', payload.role)
+            }
+
+            // Redirect based on role
+            const redirectPath = payload.role === 'admin' ? '/admin' : '/'
+            router.push(redirectPath)
+          } catch (e) {
+            // If decode fails, just redirect to home
+            router.push('/')
+          }
+        }
       } else {
         const error = await response.json()
-        toast.error('Login failed', {
-          description: error.detail || 'Invalid email or password',
-        })
+        setFormData({ email: '', password: '' })
+        alert(error.detail || 'Invalid email or password')
       }
     } catch (error) {
       console.error('Login error:', error)
-      toast.error('Login failed', {
-        description: 'Unable to connect to server',
-      })
+      alert('Unable to connect to server. Make sure the backend is running.')
     } finally {
       setLoading(false)
     }

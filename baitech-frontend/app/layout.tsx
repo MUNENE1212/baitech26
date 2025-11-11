@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
-import { Toaster } from 'sonner'
+import { ToasterProvider } from '@/components/providers/ToasterProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import './globals.css'
@@ -89,7 +89,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
-        <Toaster position="top-right" richColors />
+        {/* <ToasterProvider /> */}
       </body>
     </html>
   )
