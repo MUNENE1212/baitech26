@@ -2,9 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'baitech-backend',
-      script: 'main:app',
-      interpreter: '/var/www/baitech/venv/bin/uvicorn',
-      interpreter_args: '--host 0.0.0.0 --port 8000 --workers 2',
+      script: 'start_backend.py',
+      interpreter: '/var/www/baitech/venv/bin/python',
       cwd: '/var/www/baitech',
       instances: 1,
       exec_mode: 'fork',
