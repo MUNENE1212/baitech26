@@ -39,6 +39,20 @@ location /images/ {
 }
 ```
 
+**ALSO CRITICAL:** Find the `/api/` location block (around line 59) and change from:
+```nginx
+location /api/ {
+    proxy_pass http://localhost:8000/;  # ❌ This strips /api prefix!
+```
+
+To:
+```nginx
+location /api/ {
+    proxy_pass http://localhost:8000/api/;  # ✅ Preserves /api prefix
+```
+
+This is critical because your backend uses `/api/v1/` routes, so the `/api` prefix must be preserved.
+
 ### Step 2: Update Frontend Environment Variables
 
 ```bash
@@ -48,12 +62,14 @@ nano /var/www/baitech/baitech-frontend/.env.production.local
 
 Make sure it has HTTPS URLs (replace yourdomain.com with your actual domain):
 ```bash
-NEXT_PUBLIC_API_URL=https://yourdomain.com/api
+NEXT_PUBLIC_API_URL=https://yourdomain.com/api/v1
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 NEXT_PUBLIC_APP_ENV=production
 NEXT_PUBLIC_APP_NAME=Baitech
 NEXT_PUBLIC_APP_DESCRIPTION=Premium technology products and professional tech services in Kenya
 ```
+
+**Note:** The API URL should be `https://yourdomain.com/api/v1` (with `/v1`) because your backend routes use the `/api/v1/` prefix.
 
 ### Step 3: Update Backend Environment Variables
 
