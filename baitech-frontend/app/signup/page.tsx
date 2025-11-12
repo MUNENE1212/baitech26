@@ -115,7 +115,7 @@ export default function SignupPage() {
                 <span className="text-xl font-bold text-white">E</span>
               </div>
               <div className="text-2xl font-light text-zinc-900">
-                Emen<span className="font-semibold">Tech</span>
+                Baitech <span className="font-medium">Solutions</span>
               </div>
             </Link>
 

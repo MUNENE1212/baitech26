@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Login',
-  description: 'Sign in to your EmenTech account. Access your orders, track shipments, and manage your profile.',
+  description: 'Sign in to your Baitech account. Access your orders, track shipments, and manage your profile.',
 }
 
 export default function LoginLayout({
