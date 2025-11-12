@@ -26,7 +26,10 @@ app.add_middleware(
         "http://localhost:3001",  # Next.js on alternate port
         "http://127.0.0.1:3000",
         "http://127.0.0.1:3001",
-        "https://your-nextjs-domain.com",  # Update with your production domain
+        "http://baitech.co.ke",  # Production domain
+        "https://baitech.co.ke",  # Production domain with SSL
+        "http://www.baitech.co.ke",  # www subdomain
+        "https://www.baitech.co.ke",  # www subdomain with SSL
     ],
     allow_credentials=True,
     allow_methods=["*"],
