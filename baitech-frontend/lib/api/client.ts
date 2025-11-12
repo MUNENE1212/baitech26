@@ -28,9 +28,9 @@ export async function apiFetch<T = any>(
 ): Promise<T> {
   const { token, ...fetchOptions } = options
 
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...fetchOptions.headers,
+    ...(fetchOptions.headers as Record<string, string>),
   }
 
   if (token) {
@@ -61,7 +61,7 @@ export async function apiFetch<T = any>(
     }
 
     // Return parsed JSON or raw response
-    return isJSON ? await response.json() : await response.text()
+    return (isJSON ? await response.json() : await response.text()) as T
   } catch (error) {
     if (error instanceof APIError) {
       throw error

@@ -60,7 +60,7 @@ export default function ServicesPage() {
       formDataToSend.append('features', JSON.stringify(formData.features.filter(f => f.trim())))
 
       const url = editingService
-        ? `${apiUrl}/admin/services/${editingService.service_id}`
+        ? `${apiUrl}/admin/services/${editingService._id}`
         : `${apiUrl}/admin/services`
 
       const response = await fetch(url, {
@@ -150,7 +150,7 @@ export default function ServicesPage() {
   const filteredServices = services.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     s.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (s.service_id && s.service_id.toLowerCase().includes(searchQuery.toLowerCase()))
+    s._id.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -244,7 +244,7 @@ export default function ServicesPage() {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(service.service_id || service._id)}
+                  onClick={() => handleDelete(service._id)}
                   className="flex-1 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors"
                 >
                   <Trash2 className="inline h-4 w-4 mr-1" />

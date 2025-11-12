@@ -98,7 +98,7 @@ All scripts are executable (`chmod +x`) and located in `/media/munen/muneneENT/n
 
 **Usage**: `sudo bash deployment/scripts/setup.sh`
 
-**Run Once**: On a fresh Ubuntu server before deployment
+**Run Once**: On a fresh Ubuntu or Debian server before deployment
 
 ---
 
@@ -494,7 +494,7 @@ scp root@YOUR_SERVER_IP:/var/www/baitech/backups/baitech_backup_*.tar.gz ./
 
 ## Summary
 
-All deployment files are ready for HostAfrica VPS deployment:
+All deployment files are ready for HostAfrica VPS deployment (Ubuntu/Debian):
 
 ✅ Environment configuration templates
 ✅ Nginx reverse proxy configuration

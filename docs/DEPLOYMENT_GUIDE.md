@@ -23,7 +23,7 @@ This guide will help you deploy the Baitech e-commerce platform to a HostAfrica 
 
 Before you begin, ensure you have:
 
-- A HostAfrica VPS server with Ubuntu 20.04 or 22.04
+- A HostAfrica VPS server with Ubuntu 20.04/22.04 or Debian 12
 - SSH access to your server (root or sudo user)
 - A domain name pointed to your server's IP address
 - MongoDB Atlas account (already configured)
@@ -54,7 +54,7 @@ Wait for DNS propagation (5-30 minutes).
 - **RAM**: 2GB minimum (4GB recommended)
 - **CPU**: 2 vCPU cores
 - **Storage**: 20GB SSD minimum
-- **OS**: Ubuntu 20.04 or 22.04 LTS
+- **OS**: Ubuntu 20.04/22.04 LTS or Debian 12
 
 ### Software Stack
 

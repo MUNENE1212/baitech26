@@ -56,6 +56,10 @@ apt install -y certbot python3-certbot-nginx
 echo "Installing PM2..."
 npm install -g pm2
 
+# Install UFW firewall
+echo "Installing UFW firewall..."
+apt install -y ufw
+
 # Create application directory
 echo "Creating application directory..."
 mkdir -p /var/www/baitech

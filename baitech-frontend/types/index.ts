@@ -18,11 +18,15 @@ export interface Product {
 
 export interface Service {
   _id: string
+  service_id?: string
   name: string
   description: string
   category: string
-  is_active: boolean
-  price_range?: string
+  pricing: string
+  estimated_duration?: string
+  features?: string[]
+  is_active?: boolean
+  created_at?: string
 }
 
 export interface Review {
