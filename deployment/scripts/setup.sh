@@ -1,6 +1,6 @@
 #!/bin/bash
 # Baitech VPS Setup Script for HostAfrica
-# Run this script on a fresh Ubuntu server
+# Run this script on a fresh Ubuntu or Debian server
 
 set -e
 
@@ -23,10 +23,20 @@ apt update && apt upgrade -y
 echo "Installing essential packages..."
 apt install -y curl wget git build-essential software-properties-common
 
+# Detect OS
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$ID
+else
+    OS=$(lsb_release -si 2>/dev/null || echo "unknown")
+fi
+
 # Install Python 3.11
 echo "Installing Python 3.11..."
-add-apt-repository -y ppa:deadsnakes/ppa
-apt update
+if [ "$OS" = "ubuntu" ]; then
+    add-apt-repository -y ppa:deadsnakes/ppa
+    apt update
+fi
 apt install -y python3.11 python3.11-venv python3.11-dev python3-pip
 
 # Install Node.js 20.x
