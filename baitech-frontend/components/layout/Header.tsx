@@ -48,14 +48,19 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="group relative flex items-center gap-2 transition-all"
+            className="group relative flex items-center gap-3 transition-all"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600">
-              <span className="text-xl font-bold text-white">E</span>
+            <div className="flex h-12 w-12 items-center justify-center">
+              <img src="/favicon-32x32.png" alt="Baitech" className="h-10 w-10" />
             </div>
-            <span className="text-2xl font-light tracking-tight text-zinc-900">
-              Emen<span className="font-semibold">Tech</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold tracking-tight text-zinc-900" style={{ color: '#FBB03B' }}>
+                BAITECH
+              </span>
+              <span className="text-xs font-medium tracking-wider text-zinc-600">
+                SOLUTIONS
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

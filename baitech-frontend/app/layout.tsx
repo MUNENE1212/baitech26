@@ -20,12 +20,13 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'EmenTech | Premium Tech Products & Expert Services',
-    template: '%s | EmenTech'
+    default: 'Baitech Solutions | Premium Tech Products & Expert Services',
+    template: '%s | Baitech'
   },
-  description: 'Discover premium technology products and professional tech services in Kenya. Where innovation meets craftsmanship. Shop gadgets, accessories, and get expert tech support.',
+  description: 'Discover premium technology products and professional tech services in Kenya. Your trusted partner for all tech needs. Shop gadgets, accessories, and get expert tech support.',
   keywords: [
-    'EmenTech',
+    'Baitech',
+    'Baitech Solutions',
     'tech shop Kenya',
     'premium gadgets',
     'tech accessories',
@@ -37,22 +38,22 @@ export const metadata: Metadata = {
     'Nairobi tech',
     'online tech store Kenya'
   ],
-  authors: [{ name: 'EmenTech', url: 'https://ementech.co.ke' }],
-  creator: 'EmenTech',
-  publisher: 'EmenTech',
-  metadataBase: new URL('https://ementech.co.ke'),
+  authors: [{ name: 'Baitech Solutions', url: 'https://baitech.co.ke' }],
+  creator: 'Baitech Solutions',
+  publisher: 'Baitech Solutions',
+  metadataBase: new URL('https://baitech.co.ke'),
   openGraph: {
-    title: 'EmenTech - Premium Tech Products & Services',
-    description: 'Premium technology products and professional tech services in Kenya. Where innovation meets craftsmanship.',
+    title: 'Baitech Solutions - Premium Tech Products & Services',
+    description: 'Premium technology products and professional tech services in Kenya. Your trusted partner for all tech needs.',
     type: 'website',
     locale: 'en_KE',
-    siteName: 'EmenTech',
+    siteName: 'Baitech Solutions',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EmenTech - Premium Tech Products & Services',
+    title: 'Baitech Solutions - Premium Tech Products & Services',
     description: 'Premium technology products and professional tech services in Kenya',
-    creator: '@ementech',
+    creator: '@baitech',
   },
   robots: {
     index: true,

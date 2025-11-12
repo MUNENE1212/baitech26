@@ -13,16 +13,21 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
           <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600">
-                <span className="text-xl font-bold text-white">E</span>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center">
+                <img src="/favicon-32x32.png" alt="Baitech" className="h-10 w-10" />
               </div>
-              <h3 className="text-2xl font-light text-white">
-                Emen<span className="font-semibold">Tech</span>
-              </h3>
+              <div className="flex flex-col">
+                <h3 className="text-xl font-bold tracking-tight" style={{ color: '#FBB03B' }}>
+                  BAITECH
+                </h3>
+                <span className="text-xs font-medium tracking-wider text-zinc-500">
+                  SOLUTIONS
+                </span>
+              </div>
             </div>
             <p className="text-sm leading-relaxed text-zinc-400">
-              Premium technology and expert services. Where innovation meets craftsmanship.
+              Premium technology and expert services. Your trusted partner for all tech needs.
             </p>
             <div className="flex gap-3">
               <a
@@ -125,7 +130,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-zinc-800 pt-8 md:flex-row">
           <p className="text-xs text-zinc-500">
-            &copy; {currentYear} EmenTech. All rights reserved.
+            &copy; {currentYear} Baitech Solutions. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link
