@@ -2,10 +2,9 @@ module.exports = {
   apps: [
     {
       name: 'baitech-backend',
-      script: 'uvicorn',
+      script: '/var/www/baitech/venv/bin/uvicorn',
       args: 'main:app --host 0.0.0.0 --port 8000',
       cwd: '/var/www/baitech',
-      interpreter: '/var/www/baitech/venv/bin/python',
       instances: 2,
       exec_mode: 'cluster',
       env: {
