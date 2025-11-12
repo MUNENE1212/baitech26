@@ -42,8 +42,9 @@ certbot certonly --standalone \
     --email $EMAIL \
     --preferred-challenges http
 
-# Update Nginx configuration with actual domain
-echo "Updating Nginx configuration..."
+# Replace with full HTTPS configuration
+echo "Updating Nginx configuration with SSL..."
+cp /var/www/baitech/deployment/nginx/baitech.conf /etc/nginx/sites-available/baitech
 sed -i "s/yourdomain.com/$DOMAIN/g" /etc/nginx/sites-available/baitech
 
 # Test Nginx configuration

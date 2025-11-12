@@ -89,13 +89,11 @@ npm run build
 
 echo "Setting up Nginx configuration..."
 if [ ! -f /etc/nginx/sites-available/baitech ]; then
-    cp $APP_DIR/deployment/nginx/baitech.conf /etc/nginx/sites-available/baitech
-
-    echo ""
-    echo "⚠️  IMPORTANT: Edit /etc/nginx/sites-available/baitech"
-    echo "   Replace 'yourdomain.com' with your actual domain"
     echo ""
     read -p "Enter your domain name: " DOMAIN
+
+    # Use HTTP-only config initially (before SSL certificates exist)
+    cp $APP_DIR/deployment/nginx/baitech-http.conf /etc/nginx/sites-available/baitech
     sed -i "s/yourdomain.com/$DOMAIN/g" /etc/nginx/sites-available/baitech
 
     # Create symlink
@@ -105,7 +103,15 @@ if [ ! -f /etc/nginx/sites-available/baitech ]; then
     rm -f /etc/nginx/sites-enabled/default
 
     # Test Nginx configuration
+    echo "Testing Nginx configuration..."
     nginx -t
+
+    if [ $? -eq 0 ]; then
+        echo "✓ Nginx configuration is valid"
+    else
+        echo "✗ Nginx configuration has errors"
+        exit 1
+    fi
 fi
 
 echo "Setting up PM2..."
