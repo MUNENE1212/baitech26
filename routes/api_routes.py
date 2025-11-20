@@ -69,7 +69,10 @@ async def get_products(search: str = "", category: str = "", limit: int = 100):
         if "images" in product and product["images"]:
             product["images"] = [img.replace("/static/images/", "/images/") for img in product["images"]]
 
-    return products
+    return {
+        "products": products,
+        "total": len(products)
+    }
 
 
 @router.get("/products/{product_id}")
@@ -91,15 +94,12 @@ async def get_services():
     """
     Get all active services
     """
-    services = await db.services_offered.find({"is_active": True}).to_list(100)
+    services = await db.services_offered.find().to_list(100)
 
     for service in services:
         service["_id"] = str(service["_id"])
 
-    return {
-        "services": services,
-        "total": len(services),
-    }
+    return services
 
 
 @router.get("/dashboard/admin")
