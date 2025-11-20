@@ -22,10 +22,14 @@ export default function CataloguePage() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`)
         const data = await response.json()
-        setProducts(data)
-        setFilteredProducts(data)
+        // Handle both response formats: direct array or object with products property
+        const productsData = Array.isArray(data) ? data : (data.products || [])
+        setProducts(productsData)
+        setFilteredProducts(productsData)
       } catch (error) {
         console.error('Failed to fetch products:', error)
+        setProducts([])
+        setFilteredProducts([])
       } finally {
         setLoading(false)
       }
