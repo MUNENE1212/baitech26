@@ -60,8 +60,8 @@ export default function ServicesPage() {
       formDataToSend.append('features', JSON.stringify(formData.features.filter(f => f.trim())))
 
       const url = editingService
-        ? `${apiUrl}/admin/services/${editingService._id}`
-        : `${apiUrl}/admin/services`
+        ? `${apiUrl}/api/admin/services/${editingService._id}`
+        : `${apiUrl}/api/admin/services`
 
       const response = await fetch(url, {
         method: editingService ? 'PUT' : 'POST',

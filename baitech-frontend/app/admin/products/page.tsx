@@ -112,8 +112,8 @@ export default function ProductsPage() {
       }
 
       const url = editingProduct
-        ? `${apiUrl}/admin/products/${editingProduct.product_id}`
-        : `${apiUrl}/admin/products`
+        ? `${apiUrl}/api/admin/products/${editingProduct.product_id}`
+        : `${apiUrl}/api/admin/products`
 
       const response = await fetch(url, {
         method: editingProduct ? 'PUT' : 'POST',
