@@ -78,7 +78,7 @@ export function ImageUpload({
         formData.append('files', file)
       })
 
-      const response = await fetch(`${apiUrl}/admin/upload-images`, {
+      const response = await fetch(`${apiUrl}/api/admin/upload-images`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

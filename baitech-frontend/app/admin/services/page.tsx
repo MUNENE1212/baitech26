@@ -91,7 +91,7 @@ export default function ServicesPage() {
       const token = localStorage.getItem('token')
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-      const response = await fetch(`${apiUrl}/admin/services/${serviceId}`, {
+      const response = await fetch(`${apiUrl}/api/admin/services/${serviceId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

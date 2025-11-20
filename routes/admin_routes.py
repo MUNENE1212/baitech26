@@ -11,7 +11,7 @@ from bson import ObjectId
 from datetime import datetime
 import json
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 # Admin check middleware
 async def require_admin(current_user: dict = Depends(get_current_user)):
