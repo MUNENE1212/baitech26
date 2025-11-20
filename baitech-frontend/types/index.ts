@@ -25,7 +25,7 @@ export interface Service {
   name: string
   description: string
   category: string
-  pricing: string
+  pricing: number // Backend stores this as float
   estimated_duration?: string
   features?: string[]
   is_active?: boolean

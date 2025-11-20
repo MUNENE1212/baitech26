@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Settings, Save, Globe, Phone, Mail, MapPin, Clock, Shield } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function SettingsPage() {
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [settings, setSettings] = useState({
     siteName: 'Baitech',
     siteDescription: 'Your trusted technology partner',
@@ -20,15 +21,49 @@ export default function SettingsPage() {
     linkedinUrl: ''
   })
 
+  useEffect(() => {
+    fetchSettings()
+  }, [])
+
+  const fetchSettings = async () => {
+    try {
+      setLoading(true)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const response = await fetch(`${apiUrl}/api/settings/`)
+
+      if (response.ok) {
+        const data = await response.json()
+        setSettings(data)
+      }
+    } catch (err) {
+      console.error('Error fetching settings:', err)
+      toast.error('Failed to load settings')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSave = async () => {
     setSaving(true)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const token = localStorage.getItem('token')
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+      const response = await fetch(`${apiUrl}/api/settings/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(settings)
+      })
+
+      if (!response.ok) throw new Error('Failed to save settings')
 
       toast.success('Settings saved successfully!')
     } catch (err) {
+      console.error('Error saving settings:', err)
       toast.error('Failed to save settings')
     } finally {
       setSaving(false)
@@ -37,6 +72,18 @@ export default function SettingsPage() {
 
   const handleChange = (field: string, value: string) => {
     setSettings(prev => ({ ...prev, [field]: value }))
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -215,20 +262,6 @@ export default function SettingsPage() {
                 placeholder="https://linkedin.com/company/yourcompany"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-            </div>
-          </div>
-        </div>
-
-        {/* Security Notice */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex gap-3">
-            <Shield className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-yellow-900">Security Notice</p>
-              <p className="text-sm text-yellow-700 mt-1">
-                Settings are currently stored locally in your browser. For production deployment,
-                these should be saved to a database via the admin API.
-              </p>
             </div>
           </div>
         </div>

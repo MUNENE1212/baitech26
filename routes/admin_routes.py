@@ -356,6 +356,53 @@ async def delete_service(
     }
 
 # ============================================================================
+# USER MANAGEMENT ENDPOINTS
+# ============================================================================
+
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    admin_user: dict = Depends(require_admin)
+):
+    """Delete a user (admin only)"""
+    # Prevent deleting yourself
+    if str(admin_user.get("_id")) == user_id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+
+    result = await db.users.delete_one({"_id": ObjectId(user_id)})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"success": True, "message": "User deleted successfully"}
+
+
+@router.put("/users/{user_id}/role")
+async def update_user_role(
+    user_id: str,
+    role: str = Form(...),
+    admin_user: dict = Depends(require_admin)
+):
+    """Update user role (admin only)"""
+    if role not in ["admin", "customer", "technician"]:
+        raise HTTPException(status_code=400, detail="Invalid role")
+
+    # Prevent changing your own role
+    if str(admin_user.get("_id")) == user_id:
+        raise HTTPException(status_code=400, detail="Cannot change your own role")
+
+    result = await db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"role": role}}
+    )
+
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {"success": True, "message": f"User role updated to {role}"}
+
+
+# ============================================================================
 # DASHBOARD STATS
 # ============================================================================
 

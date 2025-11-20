@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Users, Shield, User, Mail, Phone, Calendar, Search } from 'lucide-react'
+import { Users, Shield, User, Mail, Phone, Calendar, Search, Trash2, Edit } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface UserData {
@@ -9,7 +9,7 @@ interface UserData {
   name: string
   email: string
   phone?: string
-  role: 'admin' | 'customer'
+  role: 'admin' | 'customer' | 'technician'
   created_at?: string
 }
 
@@ -17,11 +17,25 @@ export default function UsersPage() {
   const [users, setUsers] = useState<UserData[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterRole, setFilterRole] = useState<'all' | 'admin' | 'customer'>('all')
+  const [filterRole, setFilterRole] = useState<'all' | 'admin' | 'customer' | 'technician'>('all')
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchUsers()
+    getCurrentUserId()
   }, [])
+
+  const getCurrentUserId = () => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        setCurrentUserId(payload.user_id)
+      } catch (e) {
+        console.error('Error decoding token:', e)
+      }
+    }
+  }
 
   const fetchUsers = async () => {
     try {
@@ -44,6 +58,76 @@ export default function UsersPage() {
       toast.error('Failed to load users')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+      const response = await fetch(`${apiUrl}/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.detail || 'Failed to delete user')
+      }
+
+      toast.success(`User "${userName}" deleted successfully`)
+      await fetchUsers()
+    } catch (err) {
+      console.error('Error deleting user:', err)
+      toast.error(err instanceof Error ? err.message : 'Failed to delete user')
+    }
+  }
+
+  const handleChangeRole = async (userId: string, userName: string, currentRole: string) => {
+    const newRole = prompt(
+      `Change role for "${userName}"\nCurrent role: ${currentRole}\n\nEnter new role (admin, customer, or technician):`,
+      currentRole
+    )
+
+    if (!newRole || newRole === currentRole) return
+
+    if (!['admin', 'customer', 'technician'].includes(newRole.toLowerCase())) {
+      toast.error('Invalid role. Must be admin, customer, or technician')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
+      const formData = new FormData()
+      formData.append('role', newRole.toLowerCase())
+
+      const response = await fetch(`${apiUrl}/api/admin/users/${userId}/role`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.detail || 'Failed to update role')
+      }
+
+      toast.success(`Role updated to ${newRole} for "${userName}"`)
+      await fetchUsers()
+    } catch (err) {
+      console.error('Error updating role:', err)
+      toast.error(err instanceof Error ? err.message : 'Failed to update role')
     }
   }
 
@@ -126,12 +210,13 @@ export default function UsersPage() {
 
           <select
             value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value as 'all' | 'admin' | 'customer')}
+            onChange={(e) => setFilterRole(e.target.value as 'all' | 'admin' | 'customer' | 'technician')}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="all">All Roles</option>
             <option value="admin">Admins Only</option>
             <option value="customer">Customers Only</option>
+            <option value="technician">Technicians Only</option>
           </select>
         </div>
       </div>
@@ -161,6 +246,9 @@ export default function UsersPage() {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Created
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -215,6 +303,26 @@ export default function UsersPage() {
                       ) : (
                         'N/A'
                       )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleChangeRole(user._id, user.name, user.role)}
+                          disabled={user._id === currentUserId}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          title={user._id === currentUserId ? "Cannot change your own role" : "Change role"}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user._id, user.name)}
+                          disabled={user._id === currentUserId}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          title={user._id === currentUserId ? "Cannot delete your own account" : "Delete user"}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

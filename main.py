@@ -10,6 +10,7 @@ from routes.technician_routes import router as technician_router
 from routes.auth_routes import router as auth_router
 from routes.api_routes import router as api_router
 from routes.admin_routes import router as admin_router
+from routes.settings_routes import router as settings_router
 from utils.models import User, UserLogin
 
 app = FastAPI(
@@ -39,6 +40,7 @@ app.add_middleware(
 # Include API routers
 app.include_router(api_router)  # API routes for Next.js frontend
 app.include_router(admin_router)  # Admin routes
+app.include_router(settings_router)  # Settings routes
 app.include_router(product_router)
 app.include_router(service_router)
 app.include_router(order_router)

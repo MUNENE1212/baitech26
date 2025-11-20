@@ -99,19 +99,17 @@ export default function ProductsPage() {
       const token = localStorage.getItem('token')
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-      const payload = {
-        name: formData.name.trim(),
-        price: parseFloat(formData.price),
-        originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
-        description: formData.description.trim(),
-        category: formData.category,
-        stock: parseInt(formData.stock),
-        rating: formData.rating ? parseFloat(formData.rating) : undefined,
-        featured: formData.featured,
-        isHotDeal: formData.isHotDeal,
-        features: formData.features.filter(f => f.trim()).map(f => f.trim()),
-        images: formData.images
-      }
+      // Backend expects FormData
+      const formDataToSend = new FormData()
+      formDataToSend.append('name', formData.name.trim())
+      formDataToSend.append('price', formData.price)
+      formDataToSend.append('description', formData.description.trim())
+      formDataToSend.append('category', formData.category)
+      formDataToSend.append('stock', formData.stock)
+      formDataToSend.append('featured', formData.featured.toString())
+      formDataToSend.append('isHotDeal', formData.isHotDeal.toString())
+      formDataToSend.append('features', JSON.stringify(formData.features.filter(f => f.trim())))
+      formDataToSend.append('images', JSON.stringify(formData.images))
 
       const url = editingProduct
         ? `${apiUrl}/api/admin/products/${editingProduct.product_id}`
@@ -120,10 +118,9 @@ export default function ProductsPage() {
       const response = await fetch(url, {
         method: editingProduct ? 'PUT' : 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(payload)
+        body: formDataToSend
       })
 
       if (!response.ok) {
