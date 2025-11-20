@@ -136,6 +136,7 @@ async def create_product(
     category: str = Form(...),
     stock: int = Form(...),
     featured: bool = Form(False),
+    isHotDeal: bool = Form(False),
     features: str = Form("[]"),  # JSON string
     images: str = Form("[]"),  # JSON string
     admin_user: dict = Depends(require_admin)
@@ -160,6 +161,7 @@ async def create_product(
             "features": features_list,
             "stock": stock,
             "featured": featured,
+            "isHotDeal": isHotDeal,
             "created_at": datetime.utcnow().isoformat(),
             "updated_at": datetime.utcnow().isoformat()
         }
@@ -185,6 +187,7 @@ async def update_product(
     category: Optional[str] = Form(None),
     stock: Optional[int] = Form(None),
     featured: Optional[bool] = Form(None),
+    isHotDeal: Optional[bool] = Form(None),
     features: Optional[str] = Form(None),  # JSON string
     images: Optional[str] = Form(None),  # JSON string
     admin_user: dict = Depends(require_admin)
@@ -205,6 +208,8 @@ async def update_product(
             update_data["stock"] = stock
         if featured is not None:
             update_data["featured"] = featured
+        if isHotDeal is not None:
+            update_data["isHotDeal"] = isHotDeal
         if features is not None:
             update_data["features"] = json.loads(features)
         if images is not None:
