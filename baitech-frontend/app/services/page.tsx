@@ -17,12 +17,16 @@ export default function ServicesPage() {
   useEffect(() => {
     async function fetchServices() {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/services`)
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+        const response = await fetch(`${apiUrl}/api/v1/services`)
         const data = await response.json()
-        setServices(data.services)
-        setFilteredServices(data.services)
+        // API returns array directly
+        setServices(Array.isArray(data) ? data : [])
+        setFilteredServices(Array.isArray(data) ? data : [])
       } catch (error) {
         console.error('Failed to fetch services:', error)
+        setServices([])
+        setFilteredServices([])
       } finally {
         setLoading(false)
       }
@@ -31,11 +35,16 @@ export default function ServicesPage() {
     fetchServices()
   }, [])
 
-  // Get unique categories
-  const categories = ['all', ...new Set(services.map(s => s.category))]
+  // Get unique categories (only if services is loaded)
+  const categories = ['all', ...new Set(services?.map(s => s.category) || [])]
 
   // Apply filters
   useEffect(() => {
+    if (!services || services.length === 0) {
+      setFilteredServices([])
+      return
+    }
+
     let result = [...services]
 
     // Search filter
@@ -213,24 +222,34 @@ function ServiceCard({ service, onClick }: { service: Service; onClick: () => vo
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-white p-8 text-left transition-all duration-300 hover:bg-zinc-50"
+      className="group relative bg-white p-8 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
     >
       {/* Category badge */}
-      <div className="mb-4 inline-block border border-zinc-200 px-3 py-1 text-xs font-medium uppercase tracking-wider text-zinc-600">
+      <div className="mb-4 inline-block rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-medium uppercase tracking-wider text-amber-900">
         {service.category}
       </div>
 
       {/* Service name */}
-      <h3 className="mb-3 text-xl font-medium text-zinc-900">{service.name}</h3>
+      <h3 className="mb-3 text-xl font-semibold text-zinc-900">{service.name}</h3>
 
       {/* Description */}
-      <p className="mb-6 line-clamp-3 text-sm leading-relaxed text-zinc-600">
+      <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-zinc-600">
         {service.description}
       </p>
 
+      {/* Pricing */}
+      {service.pricing && (
+        <div className="mb-6">
+          <span className="text-2xl font-bold text-amber-600">
+            Ksh {typeof service.pricing === 'number' ? service.pricing.toLocaleString() : service.pricing}
+          </span>
+          <span className="ml-2 text-sm text-zinc-500">starting from</span>
+        </div>
+      )}
+
       {/* Learn more indicator */}
       <div
-        className={`flex items-center gap-2 text-sm font-medium text-zinc-900 transition-all duration-300 ${
+        className={`flex items-center gap-2 text-sm font-medium text-amber-600 transition-all duration-300 ${
           isHovered ? 'translate-x-1' : 'translate-x-0'
         }`}
       >
@@ -240,7 +259,7 @@ function ServiceCard({ service, onClick }: { service: Service; onClick: () => vo
 
       {/* Bottom border accent */}
       <div
-        className={`absolute bottom-0 left-0 h-0.5 bg-black transition-all duration-300 ${
+        className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-300 ${
           isHovered ? 'w-full' : 'w-0'
         }`}
       />
@@ -254,20 +273,28 @@ function ServiceDetailModal({ service, onClose }: { service: Service; onClose: (
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
       />
 
       {/* Modal */}
-      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 border border-zinc-200 bg-white shadow-2xl">
+      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-3xl max-h-[90vh] overflow-y-auto -translate-x-1/2 -translate-y-1/2 rounded-xl border border-zinc-200 bg-white shadow-2xl animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="border-b border-zinc-200 p-8">
-          <div className="mb-4 inline-block border border-zinc-200 px-3 py-1 text-xs font-medium uppercase tracking-wider text-zinc-600">
+        <div className="sticky top-0 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200 p-8">
+          <div className="mb-4 inline-block rounded-full bg-white border border-amber-200 px-3 py-1 text-xs font-medium uppercase tracking-wider text-amber-900">
             {service.category}
           </div>
-          <h2 className="mb-2 text-3xl font-light text-zinc-900">{service.name}</h2>
+          <h2 className="mb-2 text-3xl font-bold text-zinc-900">{service.name}</h2>
+          {service.pricing && (
+            <div className="mt-4">
+              <span className="text-3xl font-bold text-amber-600">
+                Ksh {typeof service.pricing === 'number' ? service.pricing.toLocaleString() : service.pricing}
+              </span>
+              <span className="ml-2 text-sm text-zinc-600">starting from</span>
+            </div>
+          )}
           <button
             onClick={onClose}
-            className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center border border-zinc-200 text-zinc-600 transition-colors hover:bg-zinc-100"
+            className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-full border border-zinc-300 bg-white text-zinc-600 transition-colors hover:bg-zinc-100 hover:border-zinc-400"
           >
             <X className="h-5 w-5" />
           </button>
@@ -275,10 +302,40 @@ function ServiceDetailModal({ service, onClose }: { service: Service; onClose: (
 
         {/* Content */}
         <div className="p-8">
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-900">
-            Description
-          </h3>
-          <p className="mb-8 leading-relaxed text-zinc-600">{service.description}</p>
+          {/* Description */}
+          <div className="mb-8">
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-zinc-900">
+              Description
+            </h3>
+            <p className="leading-relaxed text-zinc-700">{service.description}</p>
+          </div>
+
+          {/* Features (if available) */}
+          {service.features && service.features.length > 0 && (
+            <div className="mb-8">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-900">
+                What's Included
+              </h3>
+              <div className="grid gap-3">
+                {service.features.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-sm text-zinc-700">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Estimated Duration */}
+          {service.estimated_duration && (
+            <div className="mb-8 p-4 bg-zinc-50 rounded-lg border border-zinc-200">
+              <h3 className="mb-2 text-sm font-semibold text-zinc-900">
+                Estimated Duration
+              </h3>
+              <p className="text-zinc-700">{service.estimated_duration}</p>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex flex-col gap-3">
@@ -289,18 +346,27 @@ function ServiceDetailModal({ service, onClose }: { service: Service; onClose: (
                 )
                 onClose()
               }}
-              className="flex items-center justify-center gap-2 border border-emerald-600 bg-emerald-600 px-6 py-4 font-medium text-white transition-all hover:bg-emerald-700"
+              className="flex items-center justify-center gap-2 rounded-lg border border-emerald-600 bg-emerald-600 px-6 py-4 font-semibold text-white transition-all hover:bg-emerald-700 hover:shadow-lg"
             >
               <MessageCircle className="h-5 w-5" />
               Request via WhatsApp
             </button>
-            <a
-              href="tel:+254799954672"
-              className="flex items-center justify-center gap-2 border border-zinc-900 bg-white px-6 py-4 font-medium text-zinc-900 transition-all hover:bg-zinc-50"
-            >
-              <Phone className="h-5 w-5" />
-              Call to Book
-            </a>
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href="tel:+254799954672"
+                className="flex items-center justify-center gap-2 rounded-lg border border-amber-600 bg-white px-6 py-4 font-medium text-amber-600 transition-all hover:bg-amber-50"
+              >
+                <Phone className="h-5 w-5" />
+                Call Us
+              </a>
+              <a
+                href="mailto:mnent2025@gmail.com"
+                className="flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-6 py-4 font-medium text-zinc-700 transition-all hover:border-zinc-900"
+              >
+                <Mail className="h-5 w-5" />
+                Email
+              </a>
+            </div>
           </div>
         </div>
       </div>
