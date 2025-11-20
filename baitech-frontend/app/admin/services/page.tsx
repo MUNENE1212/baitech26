@@ -115,7 +115,7 @@ export default function ServicesPage() {
       name: service.name,
       description: service.description,
       category: service.category,
-      pricing: service.pricing.toString(),
+      pricing: service.pricing?.toString() || '0',
       estimated_duration: service.estimated_duration || '1-2 hours',
       features: service.features && service.features.length > 0 ? service.features : ['']
     })
@@ -212,7 +212,7 @@ export default function ServicesPage() {
               {/* Pricing */}
               <div className="mb-4 flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-gray-900">
-                  Ksh {service.pricing.toLocaleString()}
+                  Ksh {service.pricing ? service.pricing.toLocaleString() : 'N/A'}
                 </span>
                 <span className="text-sm text-gray-500">starting</span>
               </div>
