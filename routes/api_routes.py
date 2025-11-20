@@ -78,9 +78,18 @@ async def get_products(search: str = "", category: str = "", limit: int = 100):
 @router.get("/products/{product_id}")
 async def get_product(product_id: str):
     """
-    Get single product by ID
+    Get single product by ID (MongoDB _id or product_id field)
     """
-    product = await db.products.find_one({"product_id": product_id})
+    from bson import ObjectId
+    from bson.errors import InvalidId
+
+    # Try to find by MongoDB _id first
+    try:
+        product = await db.products.find_one({"_id": ObjectId(product_id)})
+    except InvalidId:
+        # If not a valid ObjectId, try product_id field
+        product = await db.products.find_one({"product_id": product_id})
+
     if product:
         product["_id"] = str(product["_id"])
         # Update image paths from /static/images/ to /images/ for Next.js
