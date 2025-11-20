@@ -35,9 +35,11 @@ export default function ServicesPage() {
       if (!response.ok) throw new Error('Failed to fetch services')
 
       const data = await response.json()
-      setServices(data || [])
+      // Handle both response formats: direct array or object with services property
+      setServices(Array.isArray(data) ? data : (data.services || []))
     } catch (err) {
       console.error('Error fetching services:', err)
+      setServices([])
     } finally {
       setLoading(false)
     }

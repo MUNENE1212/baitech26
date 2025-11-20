@@ -56,11 +56,13 @@ export function ServiceHighlight({
       }
 
       const data = await response.json()
-      setServices(data || [])
+      // Handle both response formats: direct array or object with services property
+      setServices(Array.isArray(data) ? data : (data.services || []))
       setError(null)
     } catch (err) {
       setError('Unable to load services')
       console.error('Error fetching services:', err)
+      setServices([])
     } finally {
       setLoading(false)
     }
