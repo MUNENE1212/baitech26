@@ -16,7 +16,7 @@ interface CompactProductCardProps {
 }
 
 export function CompactProductCard({ product, index = 0, showBadges = true }: CompactProductCardProps) {
-  const { addItem } = useCart()
+  const { addToCart } = useCart()
   const [isLoading, setIsLoading] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -30,7 +30,7 @@ export function CompactProductCard({ product, index = 0, showBadges = true }: Co
     setIsLoading(true)
 
     try {
-      await addItem({
+      addToCart({
         _id: product._id,
         name: product.name,
         price: product.price,
