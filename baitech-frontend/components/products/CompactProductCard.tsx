@@ -31,12 +31,11 @@ export function CompactProductCard({ product, index = 0, showBadges = true }: Co
 
     try {
       addToCart({
-        _id: product._id,
+        productId: product._id,
         name: product.name,
         price: product.price,
         image: product.images[0],
-        category: product.category,
-        quantity: 1
+        category: product.category
       })
       toast.success(`${product.name} added to cart!`, { duration: 2000 })
     } catch (error) {

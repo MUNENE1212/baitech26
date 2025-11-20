@@ -45,6 +45,7 @@ export interface CartItem {
   price: number
   image: string | null
   quantity: number
+  category?: string
 }
 
 export interface User {
