@@ -42,7 +42,8 @@ export function FeaturedProducts({
       }
 
       const data = await response.json()
-      setProducts(data.products || [])
+      // Handle both response formats: direct array or object with products property
+      setProducts(Array.isArray(data) ? data : (data.products || []))
       setError(null)
     } catch (err) {
       setError('Unable to load featured products')
