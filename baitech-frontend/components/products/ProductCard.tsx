@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 import { ImageCarousel } from '@/components/ui/ImageCarousel'
 import type { Product } from '@/types'
@@ -17,7 +18,9 @@ export function ProductCard({ product }: ProductCardProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     setIsAdding(true)
 
     try {
@@ -40,7 +43,9 @@ export function ProductCard({ product }: ProductCardProps) {
     }
   }
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     const url = generateProductWhatsAppUrl(product)
     openWhatsApp(url)
 
@@ -51,11 +56,12 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <div
-      className="group relative overflow-hidden rounded-lg bg-white transition-all duration-500"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <Link href={`/products/${product._id}`}>
+      <div
+        className="group relative overflow-hidden rounded-lg bg-white transition-all duration-500 cursor-pointer"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
       {/* Image Container */}
       <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-zinc-50">
         <ImageCarousel images={product.images} alt={product.name} />
@@ -144,5 +150,6 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
     </div>
+    </Link>
   )
 }

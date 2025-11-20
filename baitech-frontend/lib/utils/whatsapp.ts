@@ -6,13 +6,17 @@ const WHATSAPP_NUMBER = '254799954672'
 /**
  * Generate WhatsApp URL for single product inquiry/order
  */
-export function generateProductWhatsAppUrl(product: Product): string {
+export function generateProductWhatsAppUrl(product: Product, quantity: number = 1): string {
+  const totalPrice = product.price * quantity
+
   const message = `Hello Baitech! 👋
 
 I'm interested in the following product:
 
 📦 *${product.name}*
-💰 Price: Ksh ${product.price.toLocaleString()}
+💰 Unit Price: Ksh ${product.price.toLocaleString()}
+🔢 Quantity: ${quantity}
+💵 Total: Ksh ${totalPrice.toLocaleString()}
 🏷️ Category: ${product.category}
 ${product.stock > 0 ? `✅ In Stock: ${product.stock} available` : '❌ Out of Stock'}
 

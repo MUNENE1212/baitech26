@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Search, X, Check } from 'lucide-react'
+import { Plus, Edit, Trash2, Search, X, Check, Star, Tag, TrendingUp, Sparkles } from 'lucide-react'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Product } from '@/types'
+import { toast } from 'sonner'
+import { generateCompleteProductData } from '@/lib/utils/productDataGenerator'
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -17,13 +19,32 @@ export default function ProductsPage() {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
+    originalPrice: '',
     description: '',
     category: '',
     stock: '',
+    rating: '',
     featured: false,
     features: [''],
     images: [] as string[]
   })
+
+  // Predefined categories
+  const categories = [
+    'Computers & Laptops',
+    'Mobile Devices',
+    'Computer Components',
+    'Storage Devices',
+    'Monitors & Displays',
+    'Peripherals',
+    'Printers & Scanners',
+    'Audio & Sound',
+    'Networking',
+    'Cameras & Photography',
+    'Gaming',
+    'Accessories',
+    'Other'
+  ]
 
   useEffect(() => {
     fetchProducts()
@@ -48,21 +69,47 @@ export default function ProductsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validation
+    if (!formData.name.trim()) {
+      toast.error('Product name is required')
+      return
+    }
+    if (!formData.category) {
+      toast.error('Please select a category')
+      return
+    }
+    if (parseFloat(formData.price) <= 0) {
+      toast.error('Price must be greater than 0')
+      return
+    }
+    if (formData.originalPrice && parseFloat(formData.originalPrice) < parseFloat(formData.price)) {
+      toast.error('Original price must be greater than current price')
+      return
+    }
+    if (formData.rating && (parseFloat(formData.rating) < 0 || parseFloat(formData.rating) > 5)) {
+      toast.error('Rating must be between 0 and 5')
+      return
+    }
+
     setSubmitting(true)
 
     try {
       const token = localStorage.getItem('token')
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-      const formDataToSend = new FormData()
-      formDataToSend.append('name', formData.name)
-      formDataToSend.append('price', formData.price)
-      formDataToSend.append('description', formData.description)
-      formDataToSend.append('category', formData.category)
-      formDataToSend.append('stock', formData.stock)
-      formDataToSend.append('featured', formData.featured.toString())
-      formDataToSend.append('features', JSON.stringify(formData.features.filter(f => f.trim())))
-      formDataToSend.append('images', JSON.stringify(formData.images))
+      const payload = {
+        name: formData.name.trim(),
+        price: parseFloat(formData.price),
+        originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
+        description: formData.description.trim(),
+        category: formData.category,
+        stock: parseInt(formData.stock),
+        rating: formData.rating ? parseFloat(formData.rating) : undefined,
+        featured: formData.featured,
+        features: formData.features.filter(f => f.trim()).map(f => f.trim()),
+        images: formData.images
+      }
 
       const url = editingProduct
         ? `${apiUrl}/admin/products/${editingProduct.product_id}`
@@ -71,26 +118,36 @@ export default function ProductsPage() {
       const response = await fetch(url, {
         method: editingProduct ? 'PUT' : 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: formDataToSend
+        body: JSON.stringify(payload)
       })
 
-      if (!response.ok) throw new Error('Failed to save product')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.detail || 'Failed to save product')
+      }
+
+      toast.success(
+        editingProduct
+          ? `Product "${formData.name}" updated successfully!`
+          : `Product "${formData.name}" added successfully!`
+      )
 
       await fetchProducts()
       resetForm()
       setShowForm(false)
     } catch (err) {
       console.error('Error saving product:', err)
-      alert('Failed to save product')
+      toast.error(err instanceof Error ? err.message : 'Failed to save product')
     } finally {
       setSubmitting(false)
     }
   }
 
   const handleDelete = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return
+    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) return
 
     try {
       const token = localStorage.getItem('token')
@@ -105,10 +162,11 @@ export default function ProductsPage() {
 
       if (!response.ok) throw new Error('Failed to delete product')
 
+      toast.success('Product deleted successfully')
       await fetchProducts()
     } catch (err) {
       console.error('Error deleting product:', err)
-      alert('Failed to delete product')
+      toast.error('Failed to delete product')
     }
   }
 
@@ -117,9 +175,11 @@ export default function ProductsPage() {
     setFormData({
       name: product.name,
       price: product.price.toString(),
+      originalPrice: product.originalPrice?.toString() || '',
       description: product.description,
       category: product.category,
       stock: product.stock.toString(),
+      rating: product.rating?.toString() || '',
       featured: product.featured,
       features: product.features.length > 0 ? product.features : [''],
       images: product.images
@@ -131,9 +191,11 @@ export default function ProductsPage() {
     setFormData({
       name: '',
       price: '',
+      originalPrice: '',
       description: '',
       category: '',
       stock: '',
+      rating: '',
       featured: false,
       features: [''],
       images: []
@@ -154,6 +216,25 @@ export default function ProductsPage() {
   const removeFeature = (index: number) => {
     const newFeatures = formData.features.filter((_, i) => i !== index)
     setFormData({ ...formData, features: newFeatures })
+  }
+
+  const handleQuickFill = () => {
+    if (!editingProduct) return
+
+    // Generate sample data
+    const enhancements = generateCompleteProductData(editingProduct)
+
+    // Only fill empty fields
+    setFormData({
+      ...formData,
+      originalPrice: formData.originalPrice || enhancements.originalPrice?.toString() || '',
+      rating: formData.rating || enhancements.rating?.toString() || '',
+      features: (formData.features.length === 1 && formData.features[0] === '')
+        ? enhancements.features || ['']
+        : formData.features
+    })
+
+    toast.success('Sample data filled! Review and adjust as needed.')
   }
 
   const filteredProducts = products.filter(p =>
@@ -207,64 +288,100 @@ export default function ProductsPage() {
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Category</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Price</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Stock</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Rating</th>
                 <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Featured</th>
                 <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
-                <tr key={product._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      {product.images[0] && (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="h-12 w-12 rounded-lg object-cover"
-                        />
-                      )}
-                      <div>
-                        <p className="font-medium text-gray-900">{product.name}</p>
-                        <p className="text-sm text-gray-500">{product.product_id}</p>
+              {filteredProducts.map((product) => {
+                const hasDiscount = product.originalPrice && product.originalPrice > product.price
+                const discountPercent = hasDiscount
+                  ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
+                  : 0
+
+                return (
+                  <tr key={product._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        {product.images[0] && (
+                          <img
+                            src={product.images[0]}
+                            alt={product.name}
+                            className="h-12 w-12 rounded-lg object-cover"
+                          />
+                        )}
+                        <div>
+                          <p className="font-medium text-gray-900">{product.name}</p>
+                          <p className="text-sm text-gray-500">{product.product_id}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{product.category}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    Ksh {product.price.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                      product.stock < 10 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
-                    }`}>
-                      {product.stock}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {product.featured ? (
-                      <Check className="h-5 w-5 text-emerald-500" />
-                    ) : (
-                      <X className="h-5 w-5 text-gray-300" />
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => handleEdit(product)}
-                        className="rounded-lg p-2 text-blue-600 hover:bg-blue-50"
-                      >
-                        <Edit className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product.product_id)}
-                        className="rounded-lg p-2 text-red-600 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{product.category}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-900">
+                          KSh {product.price.toLocaleString()}
+                        </span>
+                        {hasDiscount && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500 line-through">
+                              KSh {product.originalPrice!.toLocaleString()}
+                            </span>
+                            <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-600">
+                              -{discountPercent}%
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                        product.stock < 10 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
+                      }`}>
+                        {product.stock}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {product.rating ? (
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="text-sm font-medium text-gray-900">
+                            {product.rating.toFixed(1)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">No rating</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      {product.featured ? (
+                        <Check className="h-5 w-5 text-emerald-500" />
+                      ) : (
+                        <X className="h-5 w-5 text-gray-300" />
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => handleEdit(product)}
+                          className="rounded-lg p-2 text-blue-600 hover:bg-blue-50 transition-colors"
+                          title="Edit product"
+                        >
+                          <Edit className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product.product_id)}
+                          className="rounded-lg p-2 text-red-600 hover:bg-red-50 transition-colors"
+                          title="Delete product"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
 
@@ -280,25 +397,40 @@ export default function ProductsPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-8">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {editingProduct ? 'Edit Product' : 'Add New Product'}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowForm(false)
-                  resetForm()
-                }}
-                className="rounded-lg p-2 hover:bg-gray-100"
-              >
-                <X className="h-6 w-6" />
-              </button>
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {editingProduct ? 'Edit Product' : 'Add New Product'}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowForm(false)
+                    resetForm()
+                  }}
+                  className="rounded-lg p-2 hover:bg-gray-100"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Quick Fill Button - Only show when editing */}
+              {editingProduct && (
+                <button
+                  type="button"
+                  onClick={handleQuickFill}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 rounded-lg text-purple-700 font-medium transition-colors"
+                >
+                  <Sparkles className="h-5 w-5" />
+                  Quick Fill Missing Data (Sample)
+                  <span className="text-xs bg-purple-200 px-2 py-1 rounded-full">Auto-generate</span>
+                </button>
+              )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Basic Info */}
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
+                <div className="sm:col-span-2">
                   <label className="mb-2 block text-sm font-medium text-gray-900">
                     Product Name *
                   </label>
@@ -307,6 +439,7 @@ export default function ProductsPage() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g., Dell XPS 13 Laptop"
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
                   />
                 </div>
@@ -315,40 +448,107 @@ export default function ProductsPage() {
                   <label className="mb-2 block text-sm font-medium text-gray-900">
                     Category *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-900">
+                    Stock Quantity *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    value={formData.stock}
+                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                    placeholder="0"
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-900">
-                    Price (Ksh) *
+                  <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900">
+                    <Tag className="h-4 w-4" />
+                    Current Price (KSh) *
                   </label>
                   <input
                     type="number"
                     required
                     step="0.01"
+                    min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    placeholder="0.00"
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-900">
-                    Stock *
+                  <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900">
+                    <TrendingUp className="h-4 w-4" />
+                    Original Price (KSh)
+                    <span className="text-xs font-normal text-gray-500">(for discounts)</span>
                   </label>
                   <input
                     type="number"
-                    required
-                    value={formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                    step="0.01"
+                    min="0"
+                    value={formData.originalPrice}
+                    onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
+                    placeholder="0.00"
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
                   />
+                  {formData.originalPrice && formData.price && (
+                    <p className="mt-1 text-xs text-gray-600">
+                      Discount: {Math.round(((parseFloat(formData.originalPrice) - parseFloat(formData.price)) / parseFloat(formData.originalPrice)) * 100)}%
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900">
+                    <Star className="h-4 w-4" />
+                    Product Rating
+                    <span className="text-xs font-normal text-gray-500">(0-5)</span>
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                      value={formData.rating}
+                      onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
+                      placeholder="0.0"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
+                    />
+                    {formData.rating && (
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < Math.floor(parseFloat(formData.rating))
+                                ? 'fill-amber-400 text-amber-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

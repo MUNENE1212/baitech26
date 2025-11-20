@@ -79,7 +79,9 @@ async def register(user: User):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     user_dict = user.dict()
-    user_dict["password"] = hash_password(user.password)
+    user_dict["hashed_password"] = hash_password(user.password)
+    # Remove the plain password field
+    user_dict.pop("password", None)
 
     if user_dict.get("role") != "customer":
         raise HTTPException(status_code=403, detail="Only customers can register directly")
@@ -93,7 +95,7 @@ async def login(user: UserLogin):
     if not user_db:
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    if not verify_password(user.password, user_db["password"]):
+    if not verify_password(user.password, user_db.get("hashed_password", "")):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
     token = create_access_token({

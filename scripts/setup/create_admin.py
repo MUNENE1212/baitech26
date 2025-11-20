@@ -43,7 +43,7 @@ async def create_admin():
                 {"email": email},
                 {"$set": {
                     "name": name,
-                    "password": hash_password(password),
+                    "hashed_password": hash_password(password),
                     "role": "admin"
                 }}
             )
@@ -60,7 +60,7 @@ async def create_admin():
         admin_data = {
             "name": name,
             "email": email,
-            "password": hash_password(password),
+            "hashed_password": hash_password(password),
             "role": "admin"
         }
 

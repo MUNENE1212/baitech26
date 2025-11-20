@@ -3,21 +3,30 @@
 import { useEffect, useState } from 'react'
 import { Hero } from '@/components/homepage/Hero'
 import { ProductGrid } from '@/components/products/ProductGrid'
+import HotDealsSlider from '@/components/products/HotDealsSlider'
+import StaticDeals from '@/components/products/StaticDeals'
+import CategoryHierarchy from '@/components/categories/CategoryHierarchy'
 import { ServiceGrid } from '@/components/services/ServiceGrid'
 import { ReviewSection } from '@/components/reviews/ReviewSection'
 import { getHomeData } from '@/lib/api/home'
-import type { HomePageData } from '@/types'
+import { getAllProducts } from '@/lib/api/products'
+import type { HomePageData, Product } from '@/types'
 
 export default function HomePage() {
   const [data, setData] = useState<HomePageData | null>(null)
+  const [allProducts, setAllProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadHomeData() {
       try {
-        const homeData = await getHomeData()
+        const [homeData, products] = await Promise.all([
+          getHomeData(),
+          getAllProducts()
+        ])
         setData(homeData)
+        setAllProducts(products)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load data')
         console.error('Failed to load homepage data:', err)
@@ -37,19 +46,35 @@ export default function HomePage() {
     return <ErrorDisplay message={error} />
   }
 
+  // Filter products for hot deals (products with originalPrice or low stock)
+  const hotDeals = data?.featured_products?.filter((product: Product) =>
+    product.originalPrice || (product.stock && product.stock < 10)
+  ).slice(0, 8) || []
+
   return (
     <>
       <Hero />
 
+      {/* Hot Deals Slider */}
+      {hotDeals.length > 0 && (
+        <HotDealsSlider products={hotDeals} />
+      )}
+
+      {/* Static Deals Section */}
+      <StaticDeals />
+
+      {/* Category Hierarchy */}
+      <CategoryHierarchy products={allProducts} />
+
       {/* Featured Products */}
-      <section className="bg-white py-24">
-        <div className="container mx-auto px-6 lg:px-12">
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4 lg:px-8">
           {/* Section Header */}
-          <div className="mb-16 text-center">
+          <div className="mb-12 text-center">
             <div className="mb-4 inline-block rounded-full border border-amber-300 bg-amber-50 px-4 py-1 text-sm font-medium text-amber-900">
               Curated Selection
             </div>
-            <h2 className="text-4xl font-light tracking-tight text-zinc-900 lg:text-5xl">
+            <h2 className="text-3xl font-light tracking-tight text-zinc-900 lg:text-4xl">
               Featured <span className="font-semibold text-amber-600">Products</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-zinc-600">
@@ -57,19 +82,23 @@ export default function HomePage() {
             </p>
           </div>
 
-          <ProductGrid products={data?.featured_products || []} />
+          <ProductGrid
+            products={data?.featured_products || []}
+            variant="compact"
+            columns={5}
+          />
         </div>
       </section>
 
       {/* Featured Services */}
-      <section className="bg-zinc-50 py-24">
-        <div className="container mx-auto px-6 lg:px-12">
+      <section className="bg-zinc-50 py-16">
+        <div className="container mx-auto px-4 lg:px-8">
           {/* Section Header */}
-          <div className="mb-16 text-center">
+          <div className="mb-12 text-center">
             <div className="mb-4 inline-block rounded-full border border-amber-300 bg-white px-4 py-1 text-sm font-medium text-amber-900">
               Expert Solutions
             </div>
-            <h2 className="text-4xl font-light tracking-tight text-zinc-900 lg:text-5xl">
+            <h2 className="text-3xl font-light tracking-tight text-zinc-900 lg:text-4xl">
               Professional <span className="font-semibold text-amber-600">Services</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-zinc-600">
@@ -82,14 +111,14 @@ export default function HomePage() {
       </section>
 
       {/* Customer Reviews */}
-      <section className="bg-white py-24">
-        <div className="container mx-auto px-6 lg:px-12">
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4 lg:px-8">
           {/* Section Header */}
-          <div className="mb-16 text-center">
+          <div className="mb-12 text-center">
             <div className="mb-4 inline-block rounded-full border border-amber-300 bg-amber-50 px-4 py-1 text-sm font-medium text-amber-900">
               Testimonials
             </div>
-            <h2 className="text-4xl font-light tracking-tight text-zinc-900 lg:text-5xl">
+            <h2 className="text-3xl font-light tracking-tight text-zinc-900 lg:text-4xl">
               Client <span className="font-semibold text-amber-600">Feedback</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-zinc-600">

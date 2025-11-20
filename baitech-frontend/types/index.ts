@@ -7,12 +7,14 @@ export interface Product {
   product_id: string
   name: string
   price: number
+  originalPrice?: number // For showing discounts
   description: string
   category: string
   images: string[]
   features: string[]
   stock: number
   featured: boolean
+  rating?: number // Product rating (0-5)
   created_at: string
 }
 

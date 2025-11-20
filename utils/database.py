@@ -7,9 +7,11 @@ app = FastAPI()
 
 load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URL")
-MONGO_DB = os.getenv("MONGO_DB")
+# Read from environment variables, fallback to localhost for development
+MONGO_URI = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+MONGO_DB = os.getenv("MONGO_DB", "baitekdb")
 
+# Connect to MongoDB
 client = AsyncIOMotorClient(MONGO_URI)
 db = client[MONGO_DB]
 
