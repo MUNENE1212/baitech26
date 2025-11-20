@@ -14,6 +14,7 @@ export interface Product {
   features: string[]
   stock: number
   featured: boolean
+  isHotDeal?: boolean // Mark product as hot deal
   rating?: number // Product rating (0-5)
   created_at: string
 }

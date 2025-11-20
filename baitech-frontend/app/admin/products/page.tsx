@@ -25,6 +25,7 @@ export default function ProductsPage() {
     stock: '',
     rating: '',
     featured: false,
+    isHotDeal: false,
     features: [''],
     images: [] as string[]
   })
@@ -107,6 +108,7 @@ export default function ProductsPage() {
         stock: parseInt(formData.stock),
         rating: formData.rating ? parseFloat(formData.rating) : undefined,
         featured: formData.featured,
+        isHotDeal: formData.isHotDeal,
         features: formData.features.filter(f => f.trim()).map(f => f.trim()),
         images: formData.images
       }
@@ -181,6 +183,7 @@ export default function ProductsPage() {
       stock: product.stock.toString(),
       rating: product.rating?.toString() || '',
       featured: product.featured,
+      isHotDeal: product.isHotDeal || false,
       features: product.features.length > 0 ? product.features : [''],
       images: product.images
     })
@@ -197,6 +200,7 @@ export default function ProductsPage() {
       stock: '',
       rating: '',
       featured: false,
+      isHotDeal: false,
       features: [''],
       images: []
     })
@@ -626,6 +630,20 @@ export default function ProductsPage() {
                 />
                 <label htmlFor="featured" className="text-sm font-medium text-gray-900">
                   Feature this product on homepage
+                </label>
+              </div>
+
+              {/* Hot Deal Toggle */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="isHotDeal"
+                  checked={formData.isHotDeal}
+                  onChange={(e) => setFormData({ ...formData, isHotDeal: e.target.checked })}
+                  className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-2 focus:ring-orange-600/20"
+                />
+                <label htmlFor="isHotDeal" className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                  🔥 Mark as Hot Deal
                 </label>
               </div>
 

@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { Hero } from '@/components/homepage/Hero'
 import { ProductGrid } from '@/components/products/ProductGrid'
 import HotDealsSlider from '@/components/products/HotDealsSlider'
-import StaticDeals from '@/components/products/StaticDeals'
-import CategoryHierarchy from '@/components/categories/CategoryHierarchy'
 import { ServiceGrid } from '@/components/services/ServiceGrid'
 import { ReviewSection } from '@/components/reviews/ReviewSection'
 import { getHomeData } from '@/lib/api/home'
@@ -46,25 +44,34 @@ export default function HomePage() {
     return <ErrorDisplay message={error} />
   }
 
-  // Filter products for hot deals (products with originalPrice or low stock)
-  const hotDeals = data?.featured_products?.filter((product: Product) =>
-    product.originalPrice || (product.stock && product.stock < 10)
-  ).slice(0, 8) || []
+  // Filter for hot deals - products marked as hot deals or with discounts
+  const hotDeals = allProducts.filter((product: Product) =>
+    product.isHotDeal || product.originalPrice
+  ).slice(0, 10) || []
 
   return (
     <>
       <Hero />
 
-      {/* Hot Deals Slider */}
+      {/* Hot Deals Slider - Modern showcase */}
       {hotDeals.length > 0 && (
-        <HotDealsSlider products={hotDeals} />
+        <section className="bg-gradient-to-b from-amber-50 to-white py-12">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="mb-8 text-center">
+              <div className="mb-4 inline-block rounded-full bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-1 text-sm font-semibold text-white shadow-lg">
+                🔥 Limited Time Offers
+              </div>
+              <h2 className="text-3xl font-light tracking-tight text-zinc-900 lg:text-4xl">
+                Hot <span className="font-bold text-amber-600">Deals</span>
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-zinc-600">
+                Grab these amazing offers before they're gone
+              </p>
+            </div>
+            <HotDealsSlider products={hotDeals} />
+          </div>
+        </section>
       )}
-
-      {/* Static Deals Section */}
-      <StaticDeals />
-
-      {/* Category Hierarchy */}
-      <CategoryHierarchy products={allProducts} />
 
       {/* Featured Products */}
       <section className="bg-white py-16">

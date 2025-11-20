@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, ShoppingCart, MessageCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Menu, X, ShoppingCart, MessageCircle, LogOut, Shield } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { cn } from '@/lib/utils/cn'
 import { CartDrawer } from '@/components/cart/CartDrawer'
 import { generateGeneralInquiryUrl, openWhatsApp } from '@/lib/utils/whatsapp'
+import { toast } from 'sonner'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -15,16 +17,30 @@ const navigation = [
   { name: 'About', href: '/about' },
 ]
 
-const authNavigation = [
-  { name: 'Login', href: '/login' },
-  { name: 'Sign Up', href: '/signup' },
-]
-
 export function Header() {
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userRole, setUserRole] = useState<string | null>(null)
   const { totalItems, isHydrated } = useCart()
+
+  useEffect(() => {
+    // Check authentication status
+    const token = localStorage.getItem('token')
+    setIsLoggedIn(!!token)
+
+    // Decode token to get role (simple check - in production use proper JWT decode)
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]))
+        setUserRole(payload.role)
+      } catch (e) {
+        console.error('Error decoding token:', e)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +50,14 @@ export function Header() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+    setUserRole(null)
+    toast.success('Logged out successfully')
+    router.push('/')
+  }
 
   return (
     <header
@@ -80,20 +104,41 @@ export function Header() {
           <div className="flex items-center gap-3">
             {/* Auth Links - Desktop */}
             <div className="hidden md:flex items-center gap-3">
-              {authNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    "text-sm font-medium transition-all",
-                    item.name === 'Sign Up'
-                      ? "bg-amber-600 text-white px-4 py-2 hover:bg-amber-700"
-                      : "text-zinc-700 hover:text-amber-600"
+              {isLoggedIn ? (
+                <>
+                  {userRole === 'admin' && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 text-sm font-medium text-zinc-700 hover:text-amber-600 transition-colors"
+                    >
+                      <Shield className="w-4 h-4" />
+                      Admin
+                    </Link>
                   )}
-                >
-                  {item.name}
-                </Link>
-              ))}
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 text-sm font-medium text-zinc-700 hover:text-amber-600 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-sm font-medium text-zinc-700 hover:text-amber-600"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="bg-amber-600 text-white px-4 py-2 text-sm font-medium hover:bg-amber-700 transition-all"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Cart Button */}
@@ -142,21 +187,47 @@ export function Header() {
                 </Link>
               ))}
               <div className="my-4 border-t border-zinc-200" />
-              {authNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "block px-4 py-3 text-base font-medium transition-colors",
-                    item.name === 'Sign Up'
-                      ? "bg-amber-600 text-white hover:bg-amber-700"
-                      : "text-zinc-700 hover:bg-amber-50 hover:text-amber-600"
+              {isLoggedIn ? (
+                <>
+                  {userRole === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-base font-medium text-zinc-700 hover:bg-amber-50 hover:text-amber-600"
+                    >
+                      <Shield className="w-4 h-4" />
+                      Admin Panel
+                    </Link>
                   )}
-                >
-                  {item.name}
-                </Link>
-              ))}
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 text-base font-medium text-zinc-700 hover:bg-amber-50 hover:text-amber-600 w-full text-left"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-base font-medium text-zinc-700 hover:bg-amber-50 hover:text-amber-600"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-base font-medium bg-amber-600 text-white hover:bg-amber-700"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>
