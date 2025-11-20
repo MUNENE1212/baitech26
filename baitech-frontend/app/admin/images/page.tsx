@@ -33,7 +33,7 @@ export default function ImagesPage() {
           Upload Images
         </h2>
         <ImageUpload
-          onUploadComplete={handleUploadComplete}
+          onImagesUploaded={handleUploadComplete}
           maxFiles={10}
         />
       </div>
