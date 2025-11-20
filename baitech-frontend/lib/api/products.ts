@@ -36,7 +36,8 @@ export async function getProductById(id: string): Promise<Product> {
  * Fetch all products
  */
 export async function getAllProducts(): Promise<Product[]> {
-  return api.get<Product[]>('/api/v1/products')
+  const response = await api.get<{products: Product[], total: number}>('/api/v1/products')
+  return response.products
 }
 
 /**
