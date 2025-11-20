@@ -35,7 +35,8 @@ export function CompactProductCard({ product, index = 0, showBadges = true }: Co
         name: product.name,
         price: product.price,
         image: product.images[0],
-        category: product.category
+        category: product.category,
+        quantity: 1
       })
       toast.success(`${product.name} added to cart!`, { duration: 2000 })
     } catch (error) {

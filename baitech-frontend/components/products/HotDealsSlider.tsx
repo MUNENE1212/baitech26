@@ -31,7 +31,7 @@ export default function HotDealsSlider({ products }: HotDealsSliderProps) {
 
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
-  const { addItem } = useCart()
+  const { addToCart } = useCart()
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({})
 
   const scrollPrev = useCallback(() => {
@@ -62,8 +62,8 @@ export default function HotDealsSlider({ products }: HotDealsSliderProps) {
     setLoadingStates(prev => ({ ...prev, [product._id]: true }))
 
     try {
-      await addItem({
-        _id: product._id,
+      addToCart({
+        productId: product._id,
         name: product.name,
         price: product.price,
         image: product.images[0],

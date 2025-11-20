@@ -25,7 +25,7 @@ interface ProductDetailsSectionProps {
 }
 
 export function ProductDetailsSection({ product }: ProductDetailsSectionProps) {
-  const { addItem } = useCart()
+  const { addToCart } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
@@ -33,8 +33,8 @@ export function ProductDetailsSection({ product }: ProductDetailsSectionProps) {
   const handleAddToCart = async () => {
     setIsAdding(true)
     try {
-      await addItem({
-        _id: product._id,
+      addToCart({
+        productId: product._id,
         name: product.name,
         price: product.price,
         image: product.images[0],
