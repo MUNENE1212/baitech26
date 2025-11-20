@@ -42,9 +42,9 @@ export default function FAQPage() {
             'Yes! We offer free standard delivery for orders above KSh 10,000 within Nairobi. Outside Nairobi, shipping costs vary by location.',
         },
         {
-          question: 'What if I'm not home for delivery?',
+          question: 'What if I\'m not home for delivery?',
           answer:
-            'Our delivery team will call you before arrival. If you're not available, we can arrange a convenient time or you can collect from our office.',
+            'Our delivery team will call you before arrival. If you\'re not available, we can arrange a convenient time or you can collect from our office.',
         },
       ],
     },
