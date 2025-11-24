@@ -7,6 +7,13 @@ from typing import List, Optional
 from utils.auth import get_current_user
 from utils.database import db
 from utils.image_optimizer import optimize_uploaded_image, delete_image_variants, is_allowed_file
+from utils.cloudinary_uploader import (
+    upload_image_to_cloudinary,
+    upload_multiple_images as cloudinary_upload_multiple,
+    delete_image_from_cloudinary,
+    is_cloudinary_configured,
+    extract_public_id_from_url
+)
 from bson import ObjectId
 from datetime import datetime
 import json
@@ -31,7 +38,8 @@ async def upload_image(
 ):
     """
     Upload and optimize an image
-    Returns the path to the optimized image
+    Uses Cloudinary if configured, otherwise falls back to local storage
+    Returns the path/URL to the optimized image
     """
     # Validate file type
     if not is_allowed_file(file.filename):
@@ -43,7 +51,32 @@ async def upload_image(
     # Read file content
     contents = await file.read()
 
-    # Optimize and save
+    # Try Cloudinary first if configured
+    if is_cloudinary_configured():
+        success, message, cloudinary_result = upload_image_to_cloudinary(
+            contents,
+            file.filename,
+            folder="baitech/products"
+        )
+
+        if success:
+            return {
+                "success": True,
+                "message": message,
+                "filename": file.filename,
+                "storage": "cloudinary",
+                "url": cloudinary_result.get("secure_url"),
+                "public_id": cloudinary_result.get("public_id"),
+                "thumbnail_url": cloudinary_result.get("thumbnail_url"),
+                "medium_url": cloudinary_result.get("medium_url"),
+                "large_url": cloudinary_result.get("large_url"),
+                "cloudinary_data": cloudinary_result
+            }
+        else:
+            # Log Cloudinary error and fallback to local
+            print(f"Cloudinary upload failed: {message}. Falling back to local storage.")
+
+    # Fallback to local storage
     success, message, generated_files = optimize_uploaded_image(
         contents,
         file.filename
@@ -56,8 +89,10 @@ async def upload_image(
         "success": True,
         "message": message,
         "filename": file.filename,
+        "storage": "local",
         "paths": generated_files,
-        "primary_path": generated_files[0] if generated_files else None
+        "primary_path": generated_files[0] if generated_files else None,
+        "url": generated_files[0] if generated_files else None
     }
 
 @router.post("/upload-images")
@@ -67,10 +102,12 @@ async def upload_multiple_images(
 ):
     """
     Upload and optimize multiple images
-    Returns paths to all optimized images
+    Uses Cloudinary if configured, otherwise falls back to local storage
+    Returns paths/URLs to all optimized images
     """
     results = []
     errors = []
+    use_cloudinary = is_cloudinary_configured()
 
     for file in files:
         # Validate file type
@@ -81,8 +118,30 @@ async def upload_multiple_images(
             })
             continue
 
-        # Read and optimize
+        # Read contents
         contents = await file.read()
+
+        # Try Cloudinary if configured
+        if use_cloudinary:
+            success, message, cloudinary_result = upload_image_to_cloudinary(
+                contents,
+                file.filename,
+                folder="baitech/products"
+            )
+
+            if success:
+                results.append({
+                    "filename": file.filename,
+                    "storage": "cloudinary",
+                    "url": cloudinary_result.get("secure_url"),
+                    "public_id": cloudinary_result.get("public_id"),
+                    "thumbnail_url": cloudinary_result.get("thumbnail_url"),
+                    "medium_url": cloudinary_result.get("medium_url"),
+                    "large_url": cloudinary_result.get("large_url")
+                })
+                continue
+
+        # Fallback to local storage
         success, message, generated_files = optimize_uploaded_image(
             contents,
             file.filename
@@ -91,8 +150,10 @@ async def upload_multiple_images(
         if success:
             results.append({
                 "filename": file.filename,
+                "storage": "local",
                 "paths": generated_files,
-                "primary_path": generated_files[0] if generated_files else None
+                "primary_path": generated_files[0] if generated_files else None,
+                "url": generated_files[0] if generated_files else None
             })
         else:
             errors.append({
