@@ -47,7 +47,8 @@ export function ProductShowcase({
       }
 
       const data = await response.json()
-      const productsData = data.products || []
+      // Handle both response formats: direct array or object with products property
+      const productsData = Array.isArray(data) ? data : (data.products || [])
       setProducts(productsData)
 
       // Extract unique categories

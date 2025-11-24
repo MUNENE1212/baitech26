@@ -60,7 +60,8 @@ export default function ProductsPage() {
       if (!response.ok) throw new Error('Failed to fetch products')
 
       const data = await response.json()
-      setProducts(data.products || [])
+      // Handle both response formats: direct array or object with products property
+      setProducts(Array.isArray(data) ? data : (data.products || []))
     } catch (err) {
       console.error('Error fetching products:', err)
     } finally {

@@ -56,11 +56,13 @@ export function ServiceHighlight({
       }
 
       const data = await response.json()
-      setServices(data || [])
+      // Handle both response formats: direct array or object with services property
+      setServices(Array.isArray(data) ? data : (data.services || []))
       setError(null)
     } catch (err) {
       setError('Unable to load services')
       console.error('Error fetching services:', err)
+      setServices([])
     } finally {
       setLoading(false)
     }
@@ -177,7 +179,7 @@ export function ServiceHighlight({
                     {/* Pricing */}
                     <div className="mb-4 flex items-baseline gap-2">
                       <span className="text-2xl font-bold text-gray-900">
-                        Ksh {service.pricing.toLocaleString()}
+                        Ksh {service.pricing ? service.pricing.toLocaleString() : 'N/A'}
                       </span>
                       <span className="text-sm text-gray-500">starting from</span>
                     </div>
@@ -297,7 +299,7 @@ export function ServiceHighlight({
 
             <div className="mb-6">
               <div className="text-3xl font-bold text-gray-900">
-                Ksh {selectedService.pricing.toLocaleString()}
+                Ksh {selectedService.pricing ? selectedService.pricing.toLocaleString() : 'N/A'}
               </div>
               <div className="text-sm text-gray-500">Starting price</div>
             </div>

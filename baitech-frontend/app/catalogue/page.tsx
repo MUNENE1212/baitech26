@@ -32,10 +32,10 @@ function CatalogueContent() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`)
         const data = await response.json()
-        // API returns { products: [...], total: number }
-        const productsList = data.products || []
-        setProducts(productsList)
-        setFilteredProducts(productsList)
+        // Handle both response formats: direct array or object with products property
+        const productsData = Array.isArray(data) ? data : (data.products || [])
+        setProducts(productsData)
+        setFilteredProducts(productsData)
       } catch (error) {
         console.error('Failed to fetch products:', error)
         setProducts([])
