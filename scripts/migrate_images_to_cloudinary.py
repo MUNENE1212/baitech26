@@ -68,9 +68,29 @@ async def migrate_images():
 
             # Convert local path to file path
             # /images/product.jpg -> baitech-frontend/public/images/product.jpg
-            local_path = Path("baitech-frontend/public") / img_path.lstrip("/")
+            # Also handle /static/images/ -> /images/
+            img_path_normalized = img_path.replace("/static/images/", "/images/")
+            local_path = Path("baitech-frontend/public") / img_path_normalized.lstrip("/")
 
-            if not local_path.exists():
+            # Try to find optimized WebP version first
+            webp_path = local_path.with_suffix('.webp')
+
+            # Fallback order: .webp -> original -> .jpg -> .png
+            paths_to_try = [webp_path, local_path]
+            if local_path.suffix.lower() not in ['.webp', '.jpg', '.png']:
+                paths_to_try.extend([
+                    local_path.with_suffix('.webp'),
+                    local_path.with_suffix('.jpg'),
+                    local_path.with_suffix('.png')
+                ])
+
+            file_to_upload = None
+            for path in paths_to_try:
+                if path.exists():
+                    file_to_upload = path
+                    break
+
+            if not file_to_upload:
                 print(f"  ⚠️  Local file not found: {local_path}")
                 # Keep the original path
                 new_images.append(img_path)
@@ -78,21 +98,24 @@ async def migrate_images():
 
             local_images_found = True
 
-            # Read file
-            with open(local_path, "rb") as f:
+            # Read file (prefer WebP optimized version)
+            with open(file_to_upload, "rb") as f:
                 file_bytes = f.read()
+
+            # Use original filename for Cloudinary public_id
+            upload_filename = local_path.name
 
             # Upload to Cloudinary
             success, message, result = upload_image_to_cloudinary(
                 file_bytes,
-                local_path.name,
+                upload_filename,
                 folder="baitech/products"
             )
 
             if success:
                 cloudinary_url = result.get("secure_url")
                 new_images.append(cloudinary_url)
-                print(f"  ✅ Uploaded: {local_path.name} -> Cloudinary")
+                print(f"  ✅ Uploaded: {file_to_upload.name} (optimized) -> Cloudinary")
             else:
                 print(f"  ❌ Failed: {local_path.name} - {message}")
                 # Keep the original path on failure
