@@ -34,7 +34,11 @@ async def get_home_data():
         item["_id"] = str(item["_id"])
         # Update image paths from /static/images/ to /images/ for Next.js
         if "images" in item and item["images"]:
-            item["images"] = [img.replace("/static/images/", "/images/") for img in item["images"]]
+            item["images"] = [
+                img.replace("/static/images/", "/images/")
+                for img in item["images"]
+                if img is not None
+            ]
 
     for item in featured_services:
         item["_id"] = str(item["_id"])
@@ -67,7 +71,11 @@ async def get_products(search: str = "", category: str = "", limit: int = 100):
         product["_id"] = str(product["_id"])
         # Update image paths from /static/images/ to /images/ for Next.js
         if "images" in product and product["images"]:
-            product["images"] = [img.replace("/static/images/", "/images/") for img in product["images"]]
+            product["images"] = [
+                img.replace("/static/images/", "/images/")
+                for img in product["images"]
+                if img is not None
+            ]
 
     return {
         "products": products,
@@ -94,7 +102,11 @@ async def get_product(product_id: str):
         product["_id"] = str(product["_id"])
         # Update image paths from /static/images/ to /images/ for Next.js
         if "images" in product and product["images"]:
-            product["images"] = [img.replace("/static/images/", "/images/") for img in product["images"]]
+            product["images"] = [
+                img.replace("/static/images/", "/images/")
+                for img in product["images"]
+                if img is not None
+            ]
     return product
 
 
