@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react'
 
 export function Hero() {
   return (
-    <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-black">
+    <section className="relative min-h-[60vh] flex items-center overflow-hidden bg-black">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-black to-zinc-900 opacity-90" />
 
@@ -40,7 +40,7 @@ export function Hero() {
             </motion.div>
 
             {/* Hero headline */}
-            <h1 className="text-5xl font-light tracking-tight text-white lg:text-7xl">
+            <h1 className="text-4xl font-light tracking-tight text-white lg:text-6xl">
               Elevate Your
               <br />
               <span className="font-semibold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
@@ -49,7 +49,7 @@ export function Hero() {
             </h1>
 
             {/* Subheadline */}
-            <p className="max-w-xl text-lg text-zinc-400 leading-relaxed">
+            <p className="max-w-xl text-base text-zinc-400 leading-relaxed">
               Curated selection of premium gadgets and expert technical services.
               Where innovation meets craftsmanship.
             </p>

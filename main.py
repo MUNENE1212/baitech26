@@ -60,6 +60,19 @@ async def root():
         "api_docs": "/docs",
         "api_redoc": "/redoc"
     }
+
+@app.get("/static/service-worker.js")
+async def service_worker_fallback():
+    """
+    Fallback endpoint for service worker requests
+    Returns empty JavaScript to prevent 404 errors
+    """
+    from fastapi.responses import Response
+    return Response(
+        content="// No service worker configured",
+        media_type="application/javascript",
+        status_code=200
+    )
 # Create User
 @app.post("/users/")
 async def create_user(user: User, current_user=Depends(require_role("admin"))):

@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ProductGrid } from '@/components/products/ProductGrid'
 import { Search, SlidersHorizontal, X } from 'lucide-react'
 import type { Product } from '@/types'
 import HotDealsSlider from '@/components/products/HotDealsSlider'
 
-export default function CataloguePage() {
+function CatalogueContent() {
+  const searchParams = useSearchParams()
   const [products, setProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -16,16 +18,28 @@ export default function CataloguePage() {
   const [sortBy, setSortBy] = useState<string>('newest')
   const [showFilters, setShowFilters] = useState(false)
 
+  // Set category from URL on mount
+  useEffect(() => {
+    const categoryParam = searchParams.get('category')
+    if (categoryParam) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [searchParams])
+
   // Fetch products
   useEffect(() => {
     async function fetchProducts() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/products`)
         const data = await response.json()
-        setProducts(data)
-        setFilteredProducts(data)
+        // API returns { products: [...], total: number }
+        const productsList = data.products || []
+        setProducts(productsList)
+        setFilteredProducts(productsList)
       } catch (error) {
         console.error('Failed to fetch products:', error)
+        setProducts([])
+        setFilteredProducts([])
       } finally {
         setLoading(false)
       }
@@ -35,10 +49,10 @@ export default function CataloguePage() {
   }, [])
 
   // Get unique categories
-  const categories = ['all', ...new Set(products.map(p => p.category))]
+  const categories = ['all', ...new Set((products || []).map(p => p.category))]
 
   // Get featured/hot deals products (discounted items)
-  const featuredProducts = products.filter(p => p.originalPrice && p.originalPrice > p.price)
+  const featuredProducts = (products || []).filter(p => p.originalPrice && p.originalPrice > p.price)
 
   // Handle reset all filters
   const resetFilters = () => {
@@ -241,12 +255,12 @@ export default function CataloguePage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  All ({products.length})
+                  All ({(products || []).length})
                 </button>
 
                 {/* Category Pills */}
                 {categories.filter(c => c !== 'all').map(category => {
-                  const count = products.filter(p => p.category === category).length
+                  const count = (products || []).filter(p => p.category === category).length
                   return (
                     <button
                       key={category}
@@ -335,5 +349,13 @@ function CatalogueLoadingSkeleton() {
         </div>
       </section>
     </div>
+  )
+}
+
+export default function CataloguePage() {
+  return (
+    <Suspense fallback={<CatalogueLoadingSkeleton />}>
+      <CatalogueContent />
+    </Suspense>
   )
 }

@@ -1,17 +1,27 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Search, X, ArrowUpRight, Phone, Mail, MessageCircle } from 'lucide-react'
 import type { Service } from '@/types'
 import { generateGeneralInquiryUrl, openWhatsApp } from '@/lib/utils/whatsapp'
 
-export default function ServicesPage() {
+function ServicesContent() {
+  const searchParams = useSearchParams()
   const [services, setServices] = useState<Service[]>([])
   const [filteredServices, setFilteredServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedService, setSelectedService] = useState<Service | null>(null)
+
+  // Set category from URL on mount
+  useEffect(() => {
+    const categoryParam = searchParams.get('category')
+    if (categoryParam) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [searchParams])
 
   // Fetch services
   useEffect(() => {
@@ -158,7 +168,7 @@ export default function ServicesPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-px bg-zinc-200 md:grid-cols-2 lg:grid-cols-3">
-              {filteredServices.map(service => (
+              {filteredServices.filter(service => service && service._id).map(service => (
                 <ServiceCard
                   key={service._id}
                   service={service}
@@ -371,6 +381,14 @@ function ServiceDetailModal({ service, onClose }: { service: Service; onClose: (
         </div>
       </div>
     </>
+  )
+}
+
+export default function ServicesPage() {
+  return (
+    <Suspense fallback={<ServicesLoadingSkeleton />}>
+      <ServicesContent />
+    </Suspense>
   )
 }
 
