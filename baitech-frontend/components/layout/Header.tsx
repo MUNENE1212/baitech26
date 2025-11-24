@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { Menu, X, ShoppingCart, MessageCircle, LogOut, Shield, Sparkles } from 'lucide-react'
@@ -29,6 +29,7 @@ export function Header() {
   const [userRole, setUserRole] = useState<string | null>(null)
   const [activeMegaMenu, setActiveMegaMenu] = useState<'products' | 'services' | null>(null)
   const { totalItems, isHydrated } = useCart()
+  const megaMenuTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -61,6 +62,36 @@ export function Header() {
     router.push('/')
   }
 
+  const openMegaMenu = (menuType: 'products' | 'services') => {
+    if (megaMenuTimeout.current) {
+      clearTimeout(megaMenuTimeout.current)
+      megaMenuTimeout.current = null
+    }
+    setActiveMegaMenu(menuType)
+  }
+
+  const closeMegaMenu = () => {
+    megaMenuTimeout.current = setTimeout(() => {
+      setActiveMegaMenu(null)
+    }, 150)
+  }
+
+  const cancelCloseMegaMenu = () => {
+    if (megaMenuTimeout.current) {
+      clearTimeout(megaMenuTimeout.current)
+      megaMenuTimeout.current = null
+    }
+  }
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (megaMenuTimeout.current) {
+        clearTimeout(megaMenuTimeout.current)
+      }
+    }
+  }, [])
+
   return (
     <>
       <motion.header
@@ -89,8 +120,8 @@ export function Header() {
                   <div
                     key={item.name}
                     className="relative"
-                    onMouseEnter={() => item.hasMegaMenu && setActiveMegaMenu(item.megaMenuType!)}
-                    onMouseLeave={() => item.hasMegaMenu && setActiveMegaMenu(null)}
+                    onMouseEnter={() => item.hasMegaMenu && openMegaMenu(item.megaMenuType!)}
+                    onMouseLeave={() => item.hasMegaMenu && closeMegaMenu()}
                   >
                     <Link
                       href={item.href}
@@ -241,16 +272,21 @@ export function Header() {
         </div>
 
         {/* Mega Menus */}
-        <MegaMenu
-          isOpen={activeMegaMenu === 'products'}
-          type="products"
-          onClose={() => setActiveMegaMenu(null)}
-        />
-        <MegaMenu
-          isOpen={activeMegaMenu === 'services'}
-          type="services"
-          onClose={() => setActiveMegaMenu(null)}
-        />
+        <div
+          onMouseEnter={cancelCloseMegaMenu}
+          onMouseLeave={closeMegaMenu}
+        >
+          <MegaMenu
+            isOpen={activeMegaMenu === 'products'}
+            type="products"
+            onClose={() => setActiveMegaMenu(null)}
+          />
+          <MegaMenu
+            isOpen={activeMegaMenu === 'services'}
+            type="services"
+            onClose={() => setActiveMegaMenu(null)}
+          />
+        </div>
 
         {/* Mobile Navigation */}
         <AnimatePresence>

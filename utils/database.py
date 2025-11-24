@@ -11,23 +11,8 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "baitekdb")
 
-# Simplify the connection string to work with OpenSSL 3.x
-# Remove conflicting TLS parameters from the URI if they exist
-if "mongodb+srv://" in MONGO_URI or "tls=true" in MONGO_URI:
-    # For MongoDB Atlas with OpenSSL 3.x, use minimal configuration
-    # Remove tls parameters from URI and add them as connection options
-    base_uri = MONGO_URI.split('?')[0]  # Get base URI without parameters
-
-    client = AsyncIOMotorClient(
-        base_uri,
-        serverSelectionTimeoutMS=30000,
-        connectTimeoutMS=20000,
-        socketTimeoutMS=20000,
-    )
-else:
-    # Local MongoDB connection
-    client = AsyncIOMotorClient(MONGO_URI)
-
+# Connect to MongoDB (local or Atlas)
+client = AsyncIOMotorClient(MONGO_URI)
 db = client[MONGO_DB]
 
 @app.on_event("startup")

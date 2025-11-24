@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Zap, Sparkles, TrendingUp } from 'lucide-react'
+import { ArrowRight, Zap, Sparkles, TrendingUp, ChevronRight } from 'lucide-react'
 import type { Product, Service } from '@/types'
+import { PRODUCT_CATEGORIES, type Category } from '@/lib/categories'
 
 interface MegaMenuProps {
   isOpen: boolean
@@ -52,9 +53,8 @@ export function MegaMenu({ isOpen, type, onClose }: MegaMenuProps) {
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.2 }}
         className="absolute left-0 top-full w-full border-t border-zinc-200 bg-white shadow-2xl"
-        onMouseLeave={onClose}
       >
-        <div className="container mx-auto px-6 py-12 lg:px-12">
+        <div className="container mx-auto px-6 py-8 lg:px-12">
           {loading ? (
             <LoadingSkeleton />
           ) : type === 'products' ? (
@@ -69,98 +69,119 @@ export function MegaMenu({ isOpen, type, onClose }: MegaMenuProps) {
 }
 
 function ProductsMegaMenu({ products, onClose }: { products: Product[]; onClose: () => void }) {
-  // Get unique categories
-  const categories = Array.from(new Set(products.map(p => p.category)))
-
-  // Get featured and hot deal products
-  const featuredProducts = products.filter(p => p.featured).slice(0, 3)
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
   const hotDeals = products.filter(p => p.isHotDeal || p.originalPrice).slice(0, 3)
 
   return (
-    <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-      {/* Categories Section */}
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      {/* All Categories List - Scrollable */}
       <div className="lg:col-span-4">
-        <h3 className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-900">
+        <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-900">
           <Sparkles className="h-4 w-4 text-amber-600" />
-          Shop by Category
+          All Categories
         </h3>
-        <div className="grid gap-2">
-          {categories.slice(0, 8).map((category) => {
-            const categoryProducts = products.filter(p => p.category === category)
-            return (
+        <div className="max-h-[500px] overflow-y-auto pr-4 space-y-1 scrollbar-thin scrollbar-thumb-zinc-300 scrollbar-track-zinc-100">
+          {PRODUCT_CATEGORIES.map((category) => (
+            <div
+              key={category.slug}
+              onMouseEnter={() => setHoveredCategory(category.slug)}
+              onMouseLeave={() => setHoveredCategory(null)}
+              className="relative"
+            >
               <Link
-                key={category}
-                href={`/catalogue?category=${encodeURIComponent(category)}`}
+                href={`/catalogue?category=${category.slug}`}
                 onClick={onClose}
-                className="group flex items-center justify-between rounded-lg border border-transparent px-4 py-3 transition-all hover:border-amber-200 hover:bg-amber-50"
+                className={`group flex items-center justify-between rounded-lg px-4 py-3 transition-all ${
+                  hoveredCategory === category.slug
+                    ? 'bg-amber-50 border-amber-200'
+                    : 'border-transparent hover:bg-zinc-50'
+                } border`}
               >
-                <div>
-                  <div className="font-medium text-zinc-900 group-hover:text-amber-600">
-                    {category}
-                  </div>
-                  <div className="text-xs text-zinc-500">
-                    {categoryProducts.length} {categoryProducts.length === 1 ? 'item' : 'items'}
-                  </div>
-                </div>
-                <ArrowRight className="h-4 w-4 text-zinc-400 transition-transform group-hover:translate-x-1 group-hover:text-amber-600" />
+                <span className={`font-medium transition-colors ${
+                  hoveredCategory === category.slug ? 'text-amber-600' : 'text-zinc-900'
+                }`}>
+                  {category.name}
+                </span>
+                <ChevronRight className={`h-4 w-4 transition-all ${
+                  hoveredCategory === category.slug
+                    ? 'text-amber-600 translate-x-1'
+                    : 'text-zinc-400'
+                }`} />
               </Link>
-            )
-          })}
+            </div>
+          ))}
         </div>
         <Link
           href="/catalogue"
           onClick={onClose}
-          className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-amber-600 hover:text-amber-700"
+          className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-amber-600 hover:text-amber-700"
         >
           View All Products
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
 
-      {/* Featured Products */}
-      <div className="lg:col-span-4">
-        <h3 className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-900">
-          <TrendingUp className="h-4 w-4 text-amber-600" />
-          Featured Products
-        </h3>
-        <div className="space-y-4">
-          {featuredProducts.length > 0 ? (
-            featuredProducts.map((product) => (
-              <Link
-                key={product._id}
-                href={`/products/${product._id}`}
-                onClick={onClose}
-                className="group block rounded-lg border border-zinc-200 p-4 transition-all hover:border-amber-300 hover:bg-amber-50"
-              >
-                <div className="mb-2 flex items-start justify-between">
-                  <h4 className="font-medium text-zinc-900 group-hover:text-amber-600 line-clamp-2">
-                    {product.name}
-                  </h4>
-                </div>
-                <p className="mb-3 text-sm text-zinc-600 line-clamp-2">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-amber-600">
-                    Ksh {product.price.toLocaleString()}
-                  </span>
-                  <span className="text-xs text-zinc-500">{product.category}</span>
-                </div>
-              </Link>
-            ))
+      {/* Subcategories Panel - Shows on hover */}
+      <div className="lg:col-span-5">
+        <AnimatePresence mode="wait">
+          {hoveredCategory ? (
+            <motion.div
+              key={hoveredCategory}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {(() => {
+                const category = PRODUCT_CATEGORIES.find(cat => cat.slug === hoveredCategory)
+                if (!category) return null
+
+                return (
+                  <div>
+                    <h4 className="mb-4 text-lg font-semibold text-zinc-900">
+                      {category.name}
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-300 scrollbar-track-zinc-100">
+                      {category.subcategories.map((subcategory) => (
+                        <Link
+                          key={subcategory.slug}
+                          href={`/catalogue?category=${category.slug}&subcategory=${subcategory.slug}`}
+                          onClick={onClose}
+                          className="group flex items-start gap-2 rounded-lg border border-transparent px-3 py-2 text-sm transition-all hover:border-amber-200 hover:bg-amber-50"
+                        >
+                          <ChevronRight className="h-4 w-4 flex-shrink-0 text-zinc-400 transition-colors group-hover:text-amber-600 mt-0.5" />
+                          <span className="text-zinc-700 group-hover:text-amber-600 line-clamp-2">
+                            {subcategory.name}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
+            </motion.div>
           ) : (
-            <p className="text-sm text-zinc-500">No featured products available</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex h-full items-center justify-center"
+            >
+              <div className="text-center text-zinc-500">
+                <Sparkles className="mx-auto mb-3 h-12 w-12 text-zinc-300" />
+                <p className="text-sm">Hover over a category to view subcategories</p>
+              </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
 
-      {/* Hot Deals */}
-      <div className="lg:col-span-4">
-        <h3 className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-900">
+      {/* Hot Deals Sidebar */}
+      <div className="lg:col-span-3">
+        <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-900">
           <Zap className="h-4 w-4 text-orange-600" />
           Hot Deals
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-300 scrollbar-track-zinc-100">
           {hotDeals.length > 0 ? (
             hotDeals.map((product) => (
               <Link
@@ -170,32 +191,34 @@ function ProductsMegaMenu({ products, onClose }: { products: Product[]; onClose:
                 className="group block rounded-lg border border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 p-4 transition-all hover:border-orange-300 hover:shadow-md"
               >
                 <div className="mb-2">
-                  <span className="inline-block rounded-full bg-orange-600 px-2 py-1 text-xs font-semibold text-white">
+                  <span className="inline-block rounded-full bg-orange-600 px-2 py-0.5 text-xs font-semibold text-white">
                     HOT DEAL
                   </span>
                 </div>
-                <h4 className="mb-2 font-medium text-zinc-900 group-hover:text-orange-600 line-clamp-2">
+                <h4 className="mb-2 text-sm font-medium text-zinc-900 group-hover:text-orange-600 line-clamp-2">
                   {product.name}
                 </h4>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-orange-600">
+                <div className="flex flex-col gap-1">
+                  <span className="text-base font-bold text-orange-600">
                     Ksh {product.price.toLocaleString()}
                   </span>
                   {product.originalPrice && (
-                    <>
-                      <span className="text-sm text-zinc-500 line-through">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-zinc-500 line-through">
                         Ksh {product.originalPrice.toLocaleString()}
                       </span>
                       <span className="text-xs font-semibold text-orange-600">
                         Save {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                       </span>
-                    </>
+                    </div>
                   )}
                 </div>
               </Link>
             ))
           ) : (
-            <p className="text-sm text-zinc-500">No hot deals available</p>
+            <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center">
+              <p className="text-sm text-zinc-500">No hot deals available</p>
+            </div>
           )}
         </div>
       </div>
@@ -296,28 +319,23 @@ function ServicesMegaMenu({ services, onClose }: { services: Service[]; onClose:
 
 function LoadingSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
       <div className="lg:col-span-4">
-        <div className="mb-6 h-6 w-32 animate-pulse rounded bg-zinc-200" />
+        <div className="mb-4 h-6 w-40 animate-pulse rounded bg-zinc-200" />
         <div className="space-y-2">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-12 animate-pulse rounded bg-zinc-100" />
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
           ))}
         </div>
       </div>
-      <div className="lg:col-span-4">
-        <div className="mb-6 h-6 w-32 animate-pulse rounded bg-zinc-200" />
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded bg-zinc-100" />
-          ))}
-        </div>
+      <div className="lg:col-span-5">
+        <div className="h-[400px] animate-pulse rounded-lg bg-zinc-100" />
       </div>
-      <div className="lg:col-span-4">
-        <div className="mb-6 h-6 w-32 animate-pulse rounded bg-zinc-200" />
-        <div className="space-y-4">
+      <div className="lg:col-span-3">
+        <div className="mb-4 h-6 w-24 animate-pulse rounded bg-zinc-200" />
+        <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded bg-zinc-100" />
+            <div key={i} className="h-32 animate-pulse rounded-lg bg-zinc-100" />
           ))}
         </div>
       </div>

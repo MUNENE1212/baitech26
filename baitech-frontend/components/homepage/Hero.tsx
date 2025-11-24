@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Wifi, Globe, Cpu, Zap, Network } from 'lucide-react'
 
 export function Hero() {
   return (
@@ -90,26 +90,259 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Right: Visual Element */}
+          {/* Right: Tech-Themed Animated Logo */}
           <motion.div
-            className="relative hidden lg:block"
+            className="relative hidden lg:flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <div className="relative aspect-square">
-              {/* Decorative circles */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 opacity-50 blur-3xl" />
-              <div className="absolute inset-12 rounded-full border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm" />
-              <div className="absolute inset-24 rounded-full border border-zinc-700 bg-zinc-800/20 backdrop-blur-sm" />
-
-              {/* Center content */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="text-8xl">💎</div>
-                  <div className="text-xl font-light text-zinc-300">Premium Quality</div>
-                </div>
+            <div className="relative w-[500px] h-[500px]">
+              {/* Global reach grid background */}
+              <div className="absolute inset-0 opacity-20">
+                <svg className="w-full h-full" viewBox="0 0 500 500">
+                  {/* Grid lines */}
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <g key={i}>
+                      <motion.line
+                        x1="0"
+                        y1={i * 50}
+                        x2="500"
+                        y2={i * 50}
+                        stroke="rgb(245, 158, 11)"
+                        strokeWidth="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 2, delay: i * 0.1 }}
+                      />
+                      <motion.line
+                        x1={i * 50}
+                        y1="0"
+                        x2={i * 50}
+                        y2="500"
+                        stroke="rgb(245, 158, 11)"
+                        strokeWidth="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 2, delay: i * 0.1 }}
+                      />
+                    </g>
+                  ))}
+                </svg>
               </div>
+
+              {/* Glowing tech ring animation */}
+              <motion.div
+                className="absolute inset-0 -m-12 rounded-full bg-gradient-to-r from-blue-500/20 via-amber-500/20 to-cyan-500/20 blur-3xl"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                  rotate: [0, 180, 360],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+
+              {/* Outer rotating tech ring with dashed pattern */}
+              <motion.div
+                className="absolute inset-0 -m-8 rounded-full border-4 border-dashed border-cyan-400/40"
+                animate={{
+                  rotate: 360,
+                }}
+                transition={{
+                  duration: 25,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+
+              {/* Middle rotating ring */}
+              <motion.div
+                className="absolute inset-0 -m-4 rounded-full border-2 border-amber-500/30"
+                animate={{
+                  rotate: -360,
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  rotate: {
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear",
+                  },
+                  scale: {
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
+                }}
+              />
+
+              {/* Center container */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                {/* Logo with floating animation */}
+                <motion.div
+                  className="relative z-20"
+                  animate={{
+                    y: [0, -15, 0],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img
+                    src="/logo-lg.png"
+                    alt="BAITECH Logo"
+                    className="h-48 w-48 object-contain drop-shadow-2xl"
+                  />
+
+                  {/* Tech pulse effect behind logo */}
+                  <motion.div
+                    className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-cyan-400/30 to-blue-500/30 blur-xl"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.5, 0.8, 0.5],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                </motion.div>
+              </div>
+
+              {/* Tech icons orbiting - representing global reach */}
+              {[
+                { icon: Globe, rotation: 0, color: 'from-blue-400 to-cyan-500', delay: 0 },
+                { icon: Wifi, rotation: 72, color: 'from-amber-400 to-orange-500', delay: 0.2 },
+                { icon: Cpu, rotation: 144, color: 'from-purple-400 to-pink-500', delay: 0.4 },
+                { icon: Zap, rotation: 216, color: 'from-green-400 to-emerald-500', delay: 0.6 },
+                { icon: Network, rotation: 288, color: 'from-red-400 to-rose-500', delay: 0.8 },
+              ].map(({ icon: Icon, rotation, color, delay }, index) => (
+                <motion.div
+                  key={index}
+                  className="absolute top-1/2 left-1/2"
+                  style={{
+                    transformOrigin: "center",
+                  }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotate: [rotation, rotation + 360],
+                  }}
+                  transition={{
+                    opacity: { delay: delay, duration: 0.5 },
+                    scale: { delay: delay, duration: 0.5 },
+                    rotate: {
+                      duration: 15,
+                      repeat: Infinity,
+                      ease: "linear",
+                      delay: delay,
+                    },
+                  }}
+                >
+                  <motion.div
+                    className={`flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br ${color} shadow-lg`}
+                    style={{
+                      transform: "translateX(180px)",
+                    }}
+                    animate={{
+                      rotate: [0, -360],
+                    }}
+                    transition={{
+                      duration: 15,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  >
+                    <Icon className="w-6 h-6 text-white" />
+                  </motion.div>
+                </motion.div>
+              ))}
+
+              {/* Connection lines - representing network */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 500 500">
+                {[0, 72, 144, 216, 288].map((angle, i) => {
+                  const nextAngle = (angle + 72) % 360
+                  const x1 = 250 + 180 * Math.cos((angle * Math.PI) / 180)
+                  const y1 = 250 + 180 * Math.sin((angle * Math.PI) / 180)
+                  const x2 = 250 + 180 * Math.cos((nextAngle * Math.PI) / 180)
+                  const y2 = 250 + 180 * Math.sin((nextAngle * Math.PI) / 180)
+
+                  return (
+                    <motion.line
+                      key={i}
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="url(#gradient)"
+                      strokeWidth="1"
+                      opacity="0.3"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: [0, 1, 0] }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.3,
+                      }}
+                    />
+                  )
+                })}
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="rgb(59, 130, 246)" />
+                    <stop offset="50%" stopColor="rgb(245, 158, 11)" />
+                    <stop offset="100%" stopColor="rgb(6, 182, 212)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              {/* Scanning radar effect */}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background: 'conic-gradient(from 0deg, transparent 270deg, rgba(59, 130, 246, 0.3) 360deg)',
+                }}
+                animate={{
+                  rotate: 360,
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+
+              {/* Floating data particles */}
+              {Array.from({ length: 8 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1.5 h-1.5 rounded-full bg-cyan-400"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    y: [0, -30, 0],
+                    opacity: [0, 1, 0],
+                    scale: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: i * 0.4,
+                    ease: "easeInOut",
+                  }}
+                />
+              ))}
             </div>
           </motion.div>
         </div>

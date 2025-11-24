@@ -10,6 +10,7 @@ export interface Product {
   originalPrice?: number // For showing discounts
   description: string
   category: string
+  subcategory?: string // Subcategory slug
   images: string[]
   features: string[]
   stock: number
