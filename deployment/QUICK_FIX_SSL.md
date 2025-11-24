@@ -62,14 +62,14 @@ nano /var/www/baitech/baitech-frontend/.env.production.local
 
 Make sure it has HTTPS URLs (replace yourdomain.com with your actual domain):
 ```bash
-NEXT_PUBLIC_API_URL=https://yourdomain.com/api/v1
+NEXT_PUBLIC_API_URL=https://yourdomain.com
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 NEXT_PUBLIC_APP_ENV=production
 NEXT_PUBLIC_APP_NAME=Baitech
 NEXT_PUBLIC_APP_DESCRIPTION=Premium technology products and professional tech services in Kenya
 ```
 
-**Note:** The API URL should be `https://yourdomain.com/api/v1` (with `/v1`) because your backend routes use the `/api/v1/` prefix.
+**IMPORTANT:** Do NOT include `/api/v1` in `NEXT_PUBLIC_API_URL` - the frontend code already appends `/api/v1/` to API calls. Using `https://yourdomain.com/api/v1` will cause double paths like `/api/v1/api/v1/services`.
 
 ### Step 3: Update Backend Environment Variables
 
