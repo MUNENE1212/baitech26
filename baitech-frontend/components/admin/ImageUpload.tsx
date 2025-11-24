@@ -93,7 +93,8 @@ export function ImageUpload({
       const data = await response.json()
 
       if (data.success) {
-        const newPaths = data.results.map((r: any) => r.primary_path)
+        // Use 'url' which contains Cloudinary URL or local path
+        const newPaths = data.results.map((r: any) => r.url || r.primary_path)
         const allPaths = [...uploadedPaths, ...newPaths]
         setUploadedPaths(allPaths)
         onImagesUploaded(allPaths)
