@@ -12,7 +12,8 @@ from utils.cloudinary_uploader import (
     upload_multiple_images as cloudinary_upload_multiple,
     delete_image_from_cloudinary,
     is_cloudinary_configured,
-    extract_public_id_from_url
+    extract_public_id_from_url,
+    cleanup_local_optimized_files
 )
 from bson import ObjectId
 from datetime import datetime
@@ -60,6 +61,9 @@ async def upload_image(
         )
 
         if success:
+            # Clean up local optimized files to save storage
+            cleanup_local_optimized_files(file.filename)
+
             return {
                 "success": True,
                 "message": message,
@@ -130,6 +134,9 @@ async def upload_multiple_images(
             )
 
             if success:
+                # Clean up local files after successful Cloudinary upload
+                cleanup_local_optimized_files(file.filename)
+
                 results.append({
                     "filename": file.filename,
                     "storage": "cloudinary",

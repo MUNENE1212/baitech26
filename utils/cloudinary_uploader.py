@@ -319,3 +319,50 @@ def list_images_in_folder(folder: str = "baitech/products", max_results: int = 1
     except Exception as e:
         print(f"Error listing Cloudinary images: {e}")
         return []
+
+
+def cleanup_local_optimized_files(filename: str, base_dir: Path = Path("baitech-frontend/public")) -> bool:
+    """
+    Clean up local optimized files after successful Cloudinary upload
+    Removes files from both /images/ and /images_optimized/ directories
+
+    Args:
+        filename: Original filename (with or without extension)
+        base_dir: Base directory containing images
+
+    Returns:
+        True if cleanup successful
+    """
+    try:
+        stem = Path(filename).stem
+        images_dir = base_dir / "images"
+        optimized_dir = base_dir / "images_optimized"
+
+        deleted_count = 0
+
+        # Delete from main images folder
+        for ext in ['.jpg', '.jpeg', '.png', '.webp', '.avif']:
+            img_path = images_dir / f"{stem}{ext}"
+            if img_path.exists():
+                img_path.unlink()
+                deleted_count += 1
+
+        # Delete from optimized variants folders (thumbnail, medium, large)
+        for size_name in ["thumbnail", "medium", "large"]:
+            size_dir = optimized_dir / size_name
+            if size_dir.exists():
+                for ext in ['.jpg', '.jpeg', '.png', '.webp', '.avif']:
+                    variant_path = size_dir / f"{stem}{ext}"
+                    if variant_path.exists():
+                        variant_path.unlink()
+                        deleted_count += 1
+
+        if deleted_count > 0:
+            print(f"✅ Cleaned up {deleted_count} local files for {filename} after Cloudinary upload")
+
+        return True
+
+    except Exception as e:
+        print(f"Warning: Could not cleanup local files for {filename}: {e}")
+        # Don't fail the upload if cleanup fails
+        return False
