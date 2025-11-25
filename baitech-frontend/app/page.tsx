@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Hero } from '@/components/homepage/Hero'
+import { CategorySelectionModal } from '@/components/homepage/CategorySelectionModal'
 import { ProductGrid } from '@/components/products/ProductGrid'
 import HotDealsSlider from '@/components/products/HotDealsSlider'
 import { ServiceGrid } from '@/components/services/ServiceGrid'
@@ -51,7 +51,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Hero />
+      <CategorySelectionModal />
 
       {/* Hot Deals Slider - Modern showcase */}
       {hotDeals.length > 0 && (
