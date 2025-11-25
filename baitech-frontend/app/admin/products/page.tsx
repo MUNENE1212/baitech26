@@ -6,6 +6,7 @@ import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Product } from '@/types'
 import { toast } from 'sonner'
 import { generateCompleteProductData } from '@/lib/utils/productDataGenerator'
+import { PRODUCT_CATEGORIES } from '@/lib/categories'
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -22,6 +23,7 @@ export default function ProductsPage() {
     originalPrice: '',
     description: '',
     category: '',
+    subcategory: '',
     stock: '',
     rating: '',
     featured: false,
@@ -30,22 +32,9 @@ export default function ProductsPage() {
     images: [] as string[]
   })
 
-  // Predefined categories
-  const categories = [
-    'Computers & Laptops',
-    'Mobile Devices',
-    'Computer Components',
-    'Storage Devices',
-    'Monitors & Displays',
-    'Peripherals',
-    'Printers & Scanners',
-    'Audio & Sound',
-    'Networking',
-    'Cameras & Photography',
-    'Gaming',
-    'Accessories',
-    'Other'
-  ]
+  // Get subcategories for selected category
+  const selectedCategoryData = PRODUCT_CATEGORIES.find(cat => cat.slug === formData.category)
+  const availableSubcategories = selectedCategoryData?.subcategories || []
 
   useEffect(() => {
     fetchProducts()
@@ -106,6 +95,9 @@ export default function ProductsPage() {
       formDataToSend.append('price', formData.price)
       formDataToSend.append('description', formData.description.trim())
       formDataToSend.append('category', formData.category)
+      if (formData.subcategory) {
+        formDataToSend.append('subcategory', formData.subcategory)
+      }
       formDataToSend.append('stock', formData.stock)
       formDataToSend.append('featured', formData.featured.toString())
       formDataToSend.append('isHotDeal', formData.isHotDeal.toString())
@@ -178,6 +170,7 @@ export default function ProductsPage() {
       originalPrice: product.originalPrice?.toString() || '',
       description: product.description,
       category: product.category,
+      subcategory: product.subcategory || '',
       stock: product.stock.toString(),
       rating: product.rating?.toString() || '',
       featured: product.featured,
@@ -195,6 +188,7 @@ export default function ProductsPage() {
       originalPrice: '',
       description: '',
       category: '',
+      subcategory: '',
       stock: '',
       rating: '',
       featured: false,
@@ -203,6 +197,15 @@ export default function ProductsPage() {
       images: []
     })
     setEditingProduct(null)
+  }
+
+  // Reset subcategory when category changes
+  const handleCategoryChange = (newCategory: string) => {
+    setFormData({
+      ...formData,
+      category: newCategory,
+      subcategory: '' // Reset subcategory when category changes
+    })
   }
 
   const addFeatureField = () => {
@@ -319,7 +322,19 @@ export default function ProductsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{product.category}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-900">
+                          {PRODUCT_CATEGORIES.find(c => c.slug === product.category)?.name || product.category}
+                        </span>
+                        {product.subcategory && (
+                          <span className="text-xs text-gray-500">
+                            {PRODUCT_CATEGORIES.find(c => c.slug === product.category)
+                              ?.subcategories.find(s => s.slug === product.subcategory)?.name || product.subcategory}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="text-sm font-medium text-gray-900">
@@ -453,16 +468,47 @@ export default function ProductsPage() {
                   <select
                     required
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
                     className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20"
                   >
                     <option value="">Select a category</option>
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
+                    {PRODUCT_CATEGORIES.map((cat) => (
+                      <option key={cat.slug} value={cat.slug}>
+                        {cat.name}
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-900">
+                    Subcategory
+                    {formData.category && (
+                      <span className="ml-2 text-xs font-normal text-gray-500">
+                        ({availableSubcategories.length} available)
+                      </span>
+                    )}
+                  </label>
+                  <select
+                    value={formData.subcategory}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    disabled={!formData.category}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">
+                      {formData.category ? 'Select a subcategory (optional)' : 'Select category first'}
+                    </option>
+                    {availableSubcategories.map((subcat) => (
+                      <option key={subcat.slug} value={subcat.slug}>
+                        {subcat.name}
+                      </option>
+                    ))}
+                  </select>
+                  {formData.subcategory && selectedCategoryData && (
+                    <p className="mt-1 text-xs text-amber-600">
+                      ✓ Will appear in: {selectedCategoryData.name} → {availableSubcategories.find(s => s.slug === formData.subcategory)?.name}
+                    </p>
+                  )}
                 </div>
 
                 <div>
