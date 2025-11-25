@@ -42,8 +42,11 @@ async def upload_image(
     Uses Cloudinary if configured, otherwise falls back to local storage
     Returns the path/URL to the optimized image
     """
+    print(f"🔍 [UPLOAD-SINGLE] Received file: {file.filename}")
+
     # Validate file type
     if not is_allowed_file(file.filename):
+        print(f"❌ [UPLOAD-SINGLE] Invalid file type: {file.filename}")
         raise HTTPException(
             status_code=400,
             detail="Invalid file type. Allowed: jpg, jpeg, png, webp"
@@ -51,25 +54,34 @@ async def upload_image(
 
     # Read file content
     contents = await file.read()
+    print(f"🔍 [UPLOAD-SINGLE] Read {len(contents)} bytes from {file.filename}")
 
     # Try Cloudinary first if configured
-    if is_cloudinary_configured():
+    cloudinary_configured = is_cloudinary_configured()
+    print(f"🔍 [UPLOAD-SINGLE] Cloudinary configured: {cloudinary_configured}")
+
+    if cloudinary_configured:
+        print(f"🔍 [UPLOAD-SINGLE] Attempting Cloudinary upload for {file.filename}")
         success, message, cloudinary_result = upload_image_to_cloudinary(
             contents,
             file.filename,
             folder="baitech/products"
         )
+        print(f"🔍 [UPLOAD-SINGLE] Cloudinary result - Success: {success}, Message: {message}")
 
         if success:
             # Clean up local optimized files to save storage
             cleanup_local_optimized_files(file.filename)
+
+            cloudinary_url = cloudinary_result.get("secure_url")
+            print(f"✅ [UPLOAD-SINGLE] Successfully uploaded to Cloudinary: {cloudinary_url}")
 
             return {
                 "success": True,
                 "message": message,
                 "filename": file.filename,
                 "storage": "cloudinary",
-                "url": cloudinary_result.get("secure_url"),
+                "url": cloudinary_url,
                 "public_id": cloudinary_result.get("public_id"),
                 "thumbnail_url": cloudinary_result.get("thumbnail_url"),
                 "medium_url": cloudinary_result.get("medium_url"),
@@ -78,17 +90,21 @@ async def upload_image(
             }
         else:
             # Log Cloudinary error and fallback to local
-            print(f"Cloudinary upload failed: {message}. Falling back to local storage.")
+            print(f"⚠️ [UPLOAD-SINGLE] Cloudinary upload failed: {message}. Falling back to local storage.")
 
     # Fallback to local storage
+    print(f"🔍 [UPLOAD-SINGLE] Attempting local storage for {file.filename}")
     success, message, generated_files = optimize_uploaded_image(
         contents,
         file.filename
     )
+    print(f"🔍 [UPLOAD-SINGLE] Local storage result - Success: {success}, Message: {message}")
 
     if not success:
+        print(f"❌ [UPLOAD-SINGLE] Failed to save {file.filename}: {message}")
         raise HTTPException(status_code=400, detail=message)
 
+    print(f"✅ [UPLOAD-SINGLE] Successfully saved locally: {generated_files}")
     return {
         "success": True,
         "message": message,
@@ -113,9 +129,15 @@ async def upload_multiple_images(
     errors = []
     use_cloudinary = is_cloudinary_configured()
 
+    print(f"🔍 [UPLOAD] Received {len(files)} files for upload")
+    print(f"🔍 [UPLOAD] Cloudinary configured: {use_cloudinary}")
+
     for file in files:
+        print(f"🔍 [UPLOAD] Processing file: {file.filename}")
+
         # Validate file type
         if not is_allowed_file(file.filename):
+            print(f"❌ [UPLOAD] Invalid file type: {file.filename}")
             errors.append({
                 "filename": file.filename,
                 "error": "Invalid file type"
@@ -124,37 +146,48 @@ async def upload_multiple_images(
 
         # Read contents
         contents = await file.read()
+        print(f"🔍 [UPLOAD] Read {len(contents)} bytes from {file.filename}")
 
         # Try Cloudinary if configured
         if use_cloudinary:
+            print(f"🔍 [UPLOAD] Attempting Cloudinary upload for {file.filename}")
             success, message, cloudinary_result = upload_image_to_cloudinary(
                 contents,
                 file.filename,
                 folder="baitech/products"
             )
+            print(f"🔍 [UPLOAD] Cloudinary result - Success: {success}, Message: {message}")
 
             if success:
                 # Clean up local files after successful Cloudinary upload
                 cleanup_local_optimized_files(file.filename)
 
+                cloudinary_url = cloudinary_result.get("secure_url")
+                print(f"✅ [UPLOAD] Successfully uploaded to Cloudinary: {cloudinary_url}")
+
                 results.append({
                     "filename": file.filename,
                     "storage": "cloudinary",
-                    "url": cloudinary_result.get("secure_url"),
+                    "url": cloudinary_url,
                     "public_id": cloudinary_result.get("public_id"),
                     "thumbnail_url": cloudinary_result.get("thumbnail_url"),
                     "medium_url": cloudinary_result.get("medium_url"),
                     "large_url": cloudinary_result.get("large_url")
                 })
                 continue
+            else:
+                print(f"⚠️ [UPLOAD] Cloudinary upload failed, falling back to local: {message}")
 
         # Fallback to local storage
+        print(f"🔍 [UPLOAD] Attempting local storage for {file.filename}")
         success, message, generated_files = optimize_uploaded_image(
             contents,
             file.filename
         )
+        print(f"🔍 [UPLOAD] Local storage result - Success: {success}, Message: {message}")
 
         if success:
+            print(f"✅ [UPLOAD] Successfully saved locally: {generated_files}")
             results.append({
                 "filename": file.filename,
                 "storage": "local",
@@ -163,11 +196,13 @@ async def upload_multiple_images(
                 "url": generated_files[0] if generated_files else None
             })
         else:
+            print(f"❌ [UPLOAD] Failed to save {file.filename}: {message}")
             errors.append({
                 "filename": file.filename,
                 "error": message
             })
 
+    print(f"🔍 [UPLOAD] Final results - Uploaded: {len(results)}, Failed: {len(errors)}")
     return {
         "success": len(results) > 0,
         "uploaded": len(results),
