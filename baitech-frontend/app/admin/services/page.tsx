@@ -62,7 +62,7 @@ export default function ServicesPage() {
       formDataToSend.append('features', JSON.stringify(formData.features.filter(f => f.trim())))
 
       const url = editingService
-        ? `${apiUrl}/api/admin/services/${editingService._id}`
+        ? `${apiUrl}/api/admin/services/${editingService.service_id || editingService._id}`
         : `${apiUrl}/api/admin/services`
 
       const response = await fetch(url, {
@@ -86,12 +86,13 @@ export default function ServicesPage() {
     }
   }
 
-  const handleDelete = async (serviceId: string) => {
+  const handleDelete = async (service: Service) => {
     if (!confirm('Are you sure you want to delete this service?')) return
 
     try {
       const token = localStorage.getItem('token')
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const serviceId = service.service_id || service._id
 
       const response = await fetch(`${apiUrl}/api/admin/services/${serviceId}`, {
         method: 'DELETE',
@@ -246,7 +247,7 @@ export default function ServicesPage() {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(service._id)}
+                  onClick={() => handleDelete(service)}
                   className="flex-1 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors"
                 >
                   <Trash2 className="inline h-4 w-4 mr-1" />

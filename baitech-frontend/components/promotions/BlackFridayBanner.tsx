@@ -15,7 +15,7 @@ export function BlackFridayBanner() {
   })
 
   // Set Black Friday end date (adjust as needed)
-  const blackFridayEnd = new Date('2024-12-01T23:59:59')
+  const blackFridayEnd = new Date('2026-01-10T23:59:59')
 
   useEffect(() => {
     const timer = setInterval(() => {

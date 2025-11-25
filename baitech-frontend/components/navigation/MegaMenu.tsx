@@ -86,7 +86,6 @@ function ProductsMegaMenu({ products, onClose }: { products: Product[]; onClose:
             <div
               key={category.slug}
               onMouseEnter={() => setHoveredCategory(category.slug)}
-              onMouseLeave={() => setHoveredCategory(null)}
               className="relative"
             >
               <Link
@@ -123,7 +122,17 @@ function ProductsMegaMenu({ products, onClose }: { products: Product[]; onClose:
       </div>
 
       {/* Subcategories Panel - Shows on hover */}
-      <div className="lg:col-span-5">
+      <div
+        className="lg:col-span-5"
+        onMouseEnter={() => {
+          // Keep the current hovered category active when entering subcategories panel
+        }}
+        onMouseLeave={() => {
+          // Clear hovered states when leaving subcategories panel
+          setHoveredCategory(null)
+          setHoveredSubcategory(null)
+        }}
+      >
         <AnimatePresence mode="wait">
           {hoveredCategory ? (
             <motion.div
@@ -201,7 +210,16 @@ function ProductsMegaMenu({ products, onClose }: { products: Product[]; onClose:
       </div>
 
       {/* Products Preview Sidebar */}
-      <div className="lg:col-span-3">
+      <div
+        className="lg:col-span-3"
+        onMouseEnter={() => {
+          // Keep the current hovered states active when entering products panel
+        }}
+        onMouseLeave={() => {
+          // Clear hovered subcategory when leaving products panel
+          setHoveredSubcategory(null)
+        }}
+      >
         <AnimatePresence mode="wait">
           {hoveredSubcategory && hoveredCategory ? (
             <motion.div

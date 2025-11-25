@@ -194,10 +194,10 @@ export const PROMO_META_TAGS = {
 
 export function getActivePromotion(): 'blackFriday' | 'giftcember' | null {
   const now = new Date()
-  const blackFridayStart = new Date('2024-11-25')
-  const blackFridayEnd = new Date('2024-12-01')
-  const giftcemberStart = new Date('2024-12-01')
-  const giftcemberEnd = new Date('2024-12-31')
+  const blackFridayStart = new Date('2025-11-25')
+  const blackFridayEnd = new Date('2026-01-10')
+  const giftcemberStart = new Date('2025-12-01')
+  const giftcemberEnd = new Date('2026-01-10')
 
   if (now >= blackFridayStart && now <= blackFridayEnd) {
     return 'blackFriday'

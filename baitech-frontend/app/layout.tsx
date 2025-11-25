@@ -8,6 +8,7 @@ import { getPromotionStructuredData, getPromotionMetadata, PROMO_KEYWORDS } from
 import { BlackFridayBanner } from '@/components/promotions/BlackFridayBanner'
 import { GiftcemberBanner } from '@/components/promotions/GiftcemberBanner'
 import { StickyPromoBanner } from '@/components/promotions/StickyPromoBanner'
+import { ChristmasDecorations } from '@/components/promotions/ChristmasDecorations'
 import './globals.css'
 
 const inter = Inter({
@@ -96,6 +97,8 @@ export default function RootLayout({
         ))}
       </head>
       <body className="flex min-h-screen flex-col antialiased">
+        {/* Christmas Decorations - Only during Giftcember */}
+        <ChristmasDecorationsWrapper />
         {/* Promotional Banners - Dynamic based on active promotion */}
         <PromotionalBanners />
         <Header />
@@ -112,15 +115,28 @@ export default function RootLayout({
 // Component to render appropriate promotional banner
 function PromotionalBanners() {
   const now = new Date()
-  const blackFridayStart = new Date('2024-11-25')
-  const blackFridayEnd = new Date('2024-12-01')
-  const giftcemberStart = new Date('2024-12-01')
-  const giftcemberEnd = new Date('2024-12-31')
+  const blackFridayStart = new Date('2025-11-25')
+  const blackFridayEnd = new Date('2026-01-10')
+  const giftcemberStart = new Date('2025-12-01')
+  const giftcemberEnd = new Date('2026-01-10')
 
   if (now >= blackFridayStart && now <= blackFridayEnd) {
     return <BlackFridayBanner />
   } else if (now >= giftcemberStart && now <= giftcemberEnd) {
     return <GiftcemberBanner />
+  }
+
+  return null
+}
+
+// Component to show Christmas decorations only during Giftcember
+function ChristmasDecorationsWrapper() {
+  const now = new Date()
+  const giftcemberStart = new Date('2025-11-01')  // Show throughout November, December, and early January
+  const giftcemberEnd = new Date('2026-01-10')
+
+  if (now >= giftcemberStart && now <= giftcemberEnd) {
+    return <ChristmasDecorations />
   }
 
   return null
