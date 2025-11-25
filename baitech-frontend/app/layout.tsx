@@ -4,6 +4,10 @@ import { ToasterProvider } from '@/components/providers/ToasterProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { DEFAULT_METADATA, STRUCTURED_DATA } from '@/lib/seo'
+import { getPromotionStructuredData, getPromotionMetadata, PROMO_KEYWORDS } from '@/lib/promo-seo'
+import { BlackFridayBanner } from '@/components/promotions/BlackFridayBanner'
+import { GiftcemberBanner } from '@/components/promotions/GiftcemberBanner'
+import { StickyPromoBanner } from '@/components/promotions/StickyPromoBanner'
 import './globals.css'
 
 const inter = Inter({
@@ -19,8 +23,23 @@ const poppins = Poppins({
   display: 'swap',
 })
 
+// Merge promotional keywords with default keywords
+const promoMetadata = getPromotionMetadata()
+const mergedKeywords = promoMetadata
+  ? [...(DEFAULT_METADATA.keywords || []), ...PROMO_KEYWORDS]
+  : DEFAULT_METADATA.keywords
+
 export const metadata: Metadata = {
   ...DEFAULT_METADATA,
+  ...( promoMetadata ? {
+    title: promoMetadata.title,
+    description: promoMetadata.description,
+    keywords: mergedKeywords,
+    openGraph: {
+      ...DEFAULT_METADATA.openGraph,
+      ...promoMetadata.openGraph,
+    },
+  } : {}),
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -39,6 +58,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const promoStructuredData = getPromotionStructuredData()
+
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <head>
@@ -63,13 +84,44 @@ export default function RootLayout({
             __html: JSON.stringify(STRUCTURED_DATA.website),
           }}
         />
+        {/* Promotional Structured Data */}
+        {promoStructuredData && promoStructuredData.map((schema, index) => (
+          <script
+            key={`promo-${index}`}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(schema),
+            }}
+          />
+        ))}
       </head>
       <body className="flex min-h-screen flex-col antialiased">
+        {/* Promotional Banners - Dynamic based on active promotion */}
+        <PromotionalBanners />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
         <ToasterProvider />
+        {/* Sticky Side Banner */}
+        <StickyPromoBanner />
       </body>
     </html>
   )
+}
+
+// Component to render appropriate promotional banner
+function PromotionalBanners() {
+  const now = new Date()
+  const blackFridayStart = new Date('2024-11-25')
+  const blackFridayEnd = new Date('2024-12-01')
+  const giftcemberStart = new Date('2024-12-01')
+  const giftcemberEnd = new Date('2024-12-31')
+
+  if (now >= blackFridayStart && now <= blackFridayEnd) {
+    return <BlackFridayBanner />
+  } else if (now >= giftcemberStart && now <= giftcemberEnd) {
+    return <GiftcemberBanner />
+  }
+
+  return null
 }

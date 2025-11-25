@@ -27,6 +27,7 @@ class Product(BaseModel):
     price: float = Field(..., example=29.99)
     stock: int = Field(..., example=50)
     category: Optional[str] = Field(None, example="Audio Accessories")
+    subcategory: Optional[str] = Field(None, example="headphones-earphones")
     features: Optional[List[str]] = Field(default=[], example=["Waterproof", "10h battery", "Bluetooth 5.0"])
     image_url: Optional[str] = Field(None, example="https://example.com/image.jpg")
 

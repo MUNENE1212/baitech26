@@ -237,6 +237,7 @@ async def create_product(
     price: float = Form(...),
     description: str = Form(...),
     category: str = Form(...),
+    subcategory: Optional[str] = Form(None),
     stock: int = Form(...),
     featured: bool = Form(False),
     isHotDeal: bool = Form(False),
@@ -269,6 +270,10 @@ async def create_product(
             "updated_at": datetime.utcnow().isoformat()
         }
 
+        # Add subcategory if provided
+        if subcategory:
+            product_data["subcategory"] = subcategory
+
         result = await db.products.insert_one(product_data)
 
         return {
@@ -288,6 +293,7 @@ async def update_product(
     price: Optional[float] = Form(None),
     description: Optional[str] = Form(None),
     category: Optional[str] = Form(None),
+    subcategory: Optional[str] = Form(None),
     stock: Optional[int] = Form(None),
     featured: Optional[bool] = Form(None),
     isHotDeal: Optional[bool] = Form(None),
@@ -307,6 +313,8 @@ async def update_product(
             update_data["description"] = description
         if category is not None:
             update_data["category"] = category
+        if subcategory is not None:
+            update_data["subcategory"] = subcategory
         if stock is not None:
             update_data["stock"] = stock
         if featured is not None:

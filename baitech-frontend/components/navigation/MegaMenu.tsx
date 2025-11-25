@@ -150,37 +150,34 @@ function ProductsMegaMenu({ products, onClose }: { products: Product[]; onClose:
                         )
 
                         return (
-                          <div
+                          <Link
                             key={subcategory.slug}
+                            href={`/catalogue?category=${category.slug}&subcategory=${subcategory.slug}`}
+                            onClick={onClose}
                             onMouseEnter={() => setHoveredSubcategory(subcategory.slug)}
                             onMouseLeave={() => setHoveredSubcategory(null)}
+                            className={`group flex items-start gap-2 rounded-lg border px-3 py-2 text-sm transition-all ${
+                              hoveredSubcategory === subcategory.slug
+                                ? 'border-amber-300 bg-amber-50'
+                                : 'border-transparent hover:border-amber-200 hover:bg-amber-50'
+                            }`}
                           >
-                            <Link
-                              href={`/catalogue?category=${category.slug}&subcategory=${subcategory.slug}`}
-                              onClick={onClose}
-                              className={`group flex items-start gap-2 rounded-lg border px-3 py-2 text-sm transition-all ${
-                                hoveredSubcategory === subcategory.slug
-                                  ? 'border-amber-300 bg-amber-50'
-                                  : 'border-transparent hover:border-amber-200 hover:bg-amber-50'
-                              }`}
-                            >
-                              <ChevronRight className={`h-4 w-4 flex-shrink-0 transition-colors mt-0.5 ${
-                                hoveredSubcategory === subcategory.slug ? 'text-amber-600' : 'text-zinc-400 group-hover:text-amber-600'
-                              }`} />
-                              <div className="flex-1">
-                                <span className={`line-clamp-2 ${
-                                  hoveredSubcategory === subcategory.slug ? 'text-amber-600 font-medium' : 'text-zinc-700 group-hover:text-amber-600'
-                                }`}>
-                                  {subcategory.name}
+                            <ChevronRight className={`h-4 w-4 flex-shrink-0 transition-colors mt-0.5 ${
+                              hoveredSubcategory === subcategory.slug ? 'text-amber-600' : 'text-zinc-400 group-hover:text-amber-600'
+                            }`} />
+                            <div className="flex-1">
+                              <span className={`line-clamp-2 ${
+                                hoveredSubcategory === subcategory.slug ? 'text-amber-600 font-medium' : 'text-zinc-700 group-hover:text-amber-600'
+                              }`}>
+                                {subcategory.name}
+                              </span>
+                              {subcategoryProducts.length > 0 && (
+                                <span className="text-xs text-zinc-500 mt-0.5 block">
+                                  {subcategoryProducts.length} {subcategoryProducts.length === 1 ? 'product' : 'products'}
                                 </span>
-                                {subcategoryProducts.length > 0 && (
-                                  <span className="text-xs text-zinc-500 mt-0.5 block">
-                                    {subcategoryProducts.length} {subcategoryProducts.length === 1 ? 'product' : 'products'}
-                                  </span>
-                                )}
-                              </div>
-                            </Link>
-                          </div>
+                              )}
+                            </div>
+                          </Link>
                         )
                       })}
                     </div>
