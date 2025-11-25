@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google'
 import { ToasterProvider } from '@/components/providers/ToasterProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { DEFAULT_METADATA, STRUCTURED_DATA } from '@/lib/seo'
 import './globals.css'
 
 const inter = Inter({
@@ -19,53 +20,7 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Baitech Solutions | Premium Tech Products & Expert Services',
-    template: '%s | Baitech'
-  },
-  description: 'Discover premium technology products and professional tech services in Kenya. Your trusted partner for all tech needs. Shop gadgets, accessories, and get expert tech support.',
-  keywords: [
-    'Baitech',
-    'Baitech Solutions',
-    'tech shop Kenya',
-    'premium gadgets',
-    'tech accessories',
-    'tech services',
-    'laptop repair',
-    'phone repair',
-    'smart watches',
-    'microphones',
-    'Nairobi tech',
-    'online tech store Kenya'
-  ],
-  authors: [{ name: 'Baitech Solutions', url: 'https://baitech.co.ke' }],
-  creator: 'Baitech Solutions',
-  publisher: 'Baitech Solutions',
-  metadataBase: new URL('https://baitech.co.ke'),
-  openGraph: {
-    title: 'Baitech Solutions - Premium Tech Products & Services',
-    description: 'Premium technology products and professional tech services in Kenya. Your trusted partner for all tech needs.',
-    type: 'website',
-    locale: 'en_KE',
-    siteName: 'Baitech Solutions',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Baitech Solutions - Premium Tech Products & Services',
-    description: 'Premium technology products and professional tech services in Kenya',
-    creator: '@baitech',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
+  ...DEFAULT_METADATA,
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -86,6 +41,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+      <head>
+        {/* Structured Data - Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(STRUCTURED_DATA.organization),
+          }}
+        />
+        {/* Structured Data - Local Business */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(STRUCTURED_DATA.localBusiness),
+          }}
+        />
+        {/* Structured Data - Website */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(STRUCTURED_DATA.website),
+          }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col antialiased">
         <Header />
         <main className="flex-1">{children}</main>

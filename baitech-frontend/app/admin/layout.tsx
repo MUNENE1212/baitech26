@@ -12,7 +12,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  FolderTree
 } from 'lucide-react'
 
 export default function AdminLayout({
@@ -53,6 +54,7 @@ export default function AdminLayout({
     { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/admin/products', icon: Package, label: 'Products' },
     { href: '/admin/services', icon: Wrench, label: 'Services' },
+    { href: '/admin/categories', icon: FolderTree, label: 'Categories' },
     { href: '/admin/images', icon: Image, label: 'Images' },
     { href: '/admin/users', icon: Users, label: 'Users' },
     { href: '/admin/settings', icon: Settings, label: 'Settings' },
