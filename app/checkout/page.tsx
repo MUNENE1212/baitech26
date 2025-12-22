@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useCart } from '@/hooks/useCart'
 import { X, Minus, Plus, Trash2, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
@@ -56,13 +57,16 @@ export default function CheckoutPage() {
 
     if (name.includes('.')) {
       const [parent, child] = name.split('.')
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof formData],
-          [child]: value
+      setFormData(prev => {
+        const parentValue = prev[parent as keyof typeof formData]
+        return {
+          ...prev,
+          [parent]: {
+            ...(typeof parentValue === 'object' && parentValue !== null ? parentValue : {}),
+            [child]: value
+          }
         }
-      }))
+      })
     } else {
       setFormData(prev => ({
         ...prev,
@@ -137,10 +141,12 @@ export default function CheckoutPage() {
                 <div key={item.id} className="flex gap-4 border-b border-zinc-100 pb-4">
                   <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden bg-zinc-100">
                     {item.image ? (
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.name}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
+                        sizes="80px"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-zinc-400">

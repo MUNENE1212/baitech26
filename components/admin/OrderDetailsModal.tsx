@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { X, MapPin, Phone, Mail, Package, Truck, Clock, CheckCircle, XCircle, User, CreditCard } from 'lucide-react'
 
 interface OrderItem {
@@ -224,11 +225,15 @@ export default function OrderDetailsModal({ order, isOpen, onClose, onUpdateStat
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           {item.image && (
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="h-10 w-10 object-cover rounded"
-                            />
+                            <div className="relative h-10 w-10 flex-shrink-0">
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                fill
+                                className="object-cover rounded"
+                                sizes="40px"
+                              />
+                            </div>
                           )}
                           <div>
                             <p className="font-medium text-sm">{item.name}</p>

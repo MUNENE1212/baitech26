@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ImageUpload } from '@/components/admin/ImageUpload'
+import { SimpleImageUpload } from '@/components/admin/SimpleImageUpload'
 import { Image, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -32,7 +32,7 @@ export default function ImagesPage() {
           <Image className="w-5 h-5" />
           Upload Images
         </h2>
-        <ImageUpload
+        <SimpleImageUpload
           onImagesUploaded={handleUploadComplete}
           maxFiles={10}
         />

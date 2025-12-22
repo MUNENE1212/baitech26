@@ -59,6 +59,7 @@
     "dist",
     "build",
     "backup-before-migration",
+    "cleanup-backup-*",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",

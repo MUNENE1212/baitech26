@@ -76,12 +76,12 @@ export function useFormValidation<T extends Record<string, any>>({
       crossFieldError = crossFieldResult.error;
     }
 
-    const newErrors = { ...fieldErrors };
+    const newErrors: Partial<Record<keyof T | 'crossField', string>> = { ...fieldErrors };
     if (crossFieldError) {
-      newErrors.crossField = crossFieldError;
+      (newErrors as any)['crossField'] = crossFieldError;
     }
 
-    setErrors(newErrors);
+    setErrors(newErrors as Partial<Record<keyof T, string>>);
     const overallValid = fieldsValid && crossFieldValid;
 
     // Notify parent component

@@ -13,7 +13,6 @@ export async function GET(
 ) {
    try {
      const { id } = await params;
-     console.log(`[API] GET /api/products/${id} - Starting product fetch`);
 
      // Temporarily disable cache to prevent hanging
      // TODO: Re-enable cache after fixing Redis connection issues
@@ -26,28 +25,21 @@ export async function GET(
      //   });
      // }
 
-     console.log(`[API] Connecting to MongoDB...`);
      const db = await connectMongoDB();
-     console.log(`[API] Connected to MongoDB successfully`);
-
      const productsCollection = db.collection('products');
-     console.log(`[API] Got products collection`);
 
      // Try to find by MongoDB _id first, then product_id
      let product;
 
      // Check if id looks like a valid ObjectId (24 hex characters)
      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(id);
-     console.log(`[API] Product ID: ${id}, isValidObjectId: ${isValidObjectId}`);
 
      if (isValidObjectId) {
        try {
-         console.log(`[API] Trying to find by ObjectId: ${id}`);
          product = await productsCollection.findOne({
            _id: new ObjectId(id),
            is_active: true,
          });
-         console.log(`[API] ObjectId query result:`, product ? 'Found' : 'Not found');
        } catch (error) {
          console.warn('[API] ObjectId query failed:', error);
        }
@@ -55,23 +47,18 @@ export async function GET(
 
      // If not found by ObjectId, try product_id field
      if (!product) {
-       console.log(`[API] Trying to find by product_id: ${id}`);
        product = await productsCollection.findOne({
          product_id: id,
          is_active: true,
        });
-       console.log(`[API] product_id query result:`, product ? 'Found' : 'Not found');
      }
 
      if (!product) {
-       console.log(`[API] Product not found for ID: ${id}`);
        return NextResponse.json(
          { success: false, error: 'Product not found' },
          { status: 404 }
        );
      }
-
-     console.log(`[API] Product found:`, product.name);
 
     // Transform product for API response
     const transformedProduct = {
@@ -119,18 +106,11 @@ export async function PUT(
     try {
       const { id } = await params;
       const body = await request.json();
-      console.log('=== PRODUCT UPDATE DEBUG ===');
-      console.log('Received product ID:', id);
-      console.log('Received body:', JSON.stringify(body, null, 2));
-      console.log('Images in body:', body.images);
-      console.log('Images type:', typeof body.images);
-      console.log('Images length:', body.images?.length);
 
       const validation = validateBody(productUpdateSchema)(body);
 
       if (!validation.isValid) {
         console.error('Validation errors:', validation.errors);
-        console.error('Received data:', body);
         return NextResponse.json(
           { success: false, error: 'Invalid product data', errors: validation.errors },
           { status: 400 }
@@ -138,11 +118,6 @@ export async function PUT(
       }
 
       const updateData = validation.data!;
-      console.log('=== VALIDATION RESULT ===');
-      console.log('Validation successful:', validation.isValid);
-      console.log('Validated updateData:', JSON.stringify(updateData, null, 2));
-      console.log('Images in updateData:', updateData.images);
-      console.log('Images length in updateData:', updateData.images?.length);
 
       // Try database operations with graceful fallback
       try {

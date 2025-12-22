@@ -238,7 +238,7 @@ export const serviceValidationRules = {
   service_id: {
     validate: (value: string): FieldValidationResult => {
       if (!validators.required(value)) {
-        return { IsValid: false, error: errorMessages.required('Service ID') };
+        return { isValid: false, error: errorMessages.required('Service ID') };
       }
       if (!validators.minLength(value, 3)) {
         return { isValid: false, error: errorMessages.minLength('Service ID', 3) };
