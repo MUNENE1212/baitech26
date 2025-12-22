@@ -6,6 +6,9 @@ import withPWA from "@ducanh2912/next-pwa";
 config({ path: '.env.local' });
 
 const nextConfig: NextConfig = {
+  // Empty turbopack config for Next.js 16
+  turbopack: {},
+
   output: 'standalone',
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -35,12 +38,10 @@ const nextConfig: NextConfig = {
 };
 
 // PWA Configuration
-const pwaConfig = {
+export default withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
   sw: "service-worker.js",
-};
-
-export default withPWA(nextConfig, pwaConfig);
+})(nextConfig);

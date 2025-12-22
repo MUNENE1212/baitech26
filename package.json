@@ -12,6 +12,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:redis": "node scripts/test-redis.js",
     "seed:admin": "node scripts/seed-admin-simple.js",
     "seed:admin:atlas": "python3 scripts/seed-admin-atlas.py",
     "db:migrate": "node src/scripts/migrate.js",

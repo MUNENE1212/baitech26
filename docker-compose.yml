@@ -17,8 +17,13 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - PORT=3000
       - HOSTNAME=0.0.0.0
+      - REDIS_URL=redis://redis:6379
+      - REDIS_URI=redis://redis:6379
     networks:
       - baitech-network
+    depends_on:
+      redis:
+        condition: service_started
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
@@ -30,6 +35,40 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # Redis caching service
+  redis:
+    image: redis:7-alpine
+    container_name: baitech-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - baitech-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Commander (optional - for monitoring)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: baitech-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - baitech-network
+    profiles:
+      - monitoring
 
   # Development service (optional)
   app-dev:
@@ -49,10 +88,18 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_TELEMETRY_DISABLED=1
+      - REDIS_URL=redis://redis:6379
+      - REDIS_URI=redis://redis:6379
     networks:
       - baitech-network
+    depends_on:
+      - redis
     profiles:
       - dev
+
+volumes:
+  redis_data:
+    driver: local
 
 networks:
   baitech-network:
