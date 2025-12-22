@@ -24,7 +24,6 @@ class RedisManager {
         url: redisUrl,
         socket: {
           connectTimeout: 10000,
-          lazyConnect: true,
           reconnectStrategy: (retries) => {
             if (retries > 10) {
               console.error('Redis reconnection failed after 10 attempts');
@@ -96,7 +95,8 @@ class RedisManager {
     }
 
     try {
-      return await this.client.get(key);
+      const result = await this.client.get(key) as string | null;
+      return result;
     } catch (error) {
       console.error('Redis GET error:', error);
       return null;

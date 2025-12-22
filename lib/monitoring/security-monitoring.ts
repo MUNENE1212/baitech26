@@ -263,7 +263,7 @@ class SecurityMonitoringService {
   private async persistEvent(event: SecurityEvent): Promise<void> {
     try {
       // Store in MongoDB if available
-      const { db } = await import('./mongodb-secure');
+      const { db } = await import('../db/mongodb-secure');
       if (db.isConnected()) {
         await db.getCollection('security_events').insertOne({
           ...event,

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: baitech-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    environment:
+      - REDIS_PASSWORD=your_redis_password_here
+    networks:
+      - baitech-network
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: baitech-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - baitech-network
+
+volumes:
+  redis_data:
+
+networks:
+  baitech-network:
+    driver: bridge

@@ -1,27 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
 
-// Rate limiting configuration
-export const rateLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '50'), // 50 requests per window
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: false,
-  skipFailedRequests: false,
-  keyGenerator: (req) => {
-    return req.ip || req.connection.remoteAddress || 'unknown';
+// In-memory rate limiting store for Next.js middleware
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+// Rate limiting configuration for Next.js middleware
+export const rateLimiter = {
+  check: (identifier: string, limit: number = 50, windowMs: number = 900000): boolean => {
+    const now = Date.now();
+    const key = identifier;
+    const record = rateLimitStore.get(key);
+
+    if (!record || now > record.resetTime) {
+      // First request or window expired
+      rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs
+      });
+      return true;
+    }
+
+    if (record.count >= limit) {
+      return false; // Rate limit exceeded
+    }
+
+    record.count++;
+    return true;
   },
-  handler: (req, res) => {
-    res.status(429).json({
-      error: 'Rate limit exceeded',
-      message: 'Too many requests, please try again later.',
-      retryAfter: Math.round((windowMs / 1000))
-    });
+
+  // Clean up expired entries periodically
+  cleanup: () => {
+    const now = Date.now();
+    for (const [key, record] of rateLimitStore.entries()) {
+      if (now > record.resetTime) {
+        rateLimitStore.delete(key);
+      }
+    }
   }
-});
+};
+
+// Cleanup expired rate limit entries every 5 minutes
+setInterval(rateLimiter.cleanup, 5 * 60 * 1000);
 
 // Security headers configuration
 export const securityHeaders = {
@@ -44,9 +62,7 @@ export const securityHeaders = {
   'X-XSS-Protection': '1; mode=block',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-  'Cross-Origin-Embedder-Policy': 'require-corp',
-  'Cross-Origin-Resource-Policy': 'same-origin'
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
 };
 
 // Input sanitization
@@ -122,13 +138,11 @@ export const validateFileUpload = (file: File) => {
 
 // API rate limiting for different endpoints
 export const createApiRateLimiter = (windowMs: number, max: number) => {
-  return rateLimit({
-    windowMs,
-    max,
-    message: 'Rate limit exceeded for this endpoint',
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
+  return {
+    check: (identifier: string): boolean => {
+      return rateLimiter.check(identifier, max, windowMs);
+    }
+  };
 };
 
 // Specific rate limiters for different API categories
@@ -142,7 +156,7 @@ export const logSecurityEvent = (event: string, details: any, req?: NextRequest)
     timestamp: new Date().toISOString(),
     event,
     details,
-    ip: req?.headers.get('x-forwarded-for') || req?.ip,
+    ip: req?.headers.get('x-forwarded-for') || req?.headers.get('x-real-ip') || 'unknown',
     userAgent: req?.headers.get('user-agent'),
     url: req?.url
   };
@@ -165,6 +179,6 @@ export const blockSuspiciousIP = (ip: string, reason: string) => {
 };
 
 export const isIPBlocked = (req: NextRequest): boolean => {
-  const ip = req.headers.get('x-forwarded-for') || req.ip || 'unknown';
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
   return suspiciousIPs.has(ip);
 };

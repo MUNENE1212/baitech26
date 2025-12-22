@@ -1,0 +1,2 @@
+    10	    // Check cache first
+    11	    const cacheKey = `products:${JSON.stringify(query)}`;

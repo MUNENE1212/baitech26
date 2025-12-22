@@ -65,7 +65,7 @@ class SecureMongoDBManager {
       });
 
       this.client.on('serverHeartbeatFailed', (event) => {
-        console.error('MongoDB server heartbeat failed:', event.address);
+        console.error('MongoDB server heartbeat failed:', event);
       });
 
       this.client.on('topologyOpening', (topologyId) => {
