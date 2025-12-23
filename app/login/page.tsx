@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -43,9 +44,16 @@ export default function LoginPage() {
             }
           }
 
-          // Redirect based on role
-          const redirectPath = data.data.user.role === 'admin' ? '/admin' : '/';
-          router.push(redirectPath);
+          // Check for redirect parameter
+          const redirectParam = searchParams.get('redirect')
+          if (redirectParam) {
+            // Redirect to the page user was trying to access
+            router.push(decodeURIComponent(redirectParam))
+          } else {
+            // Redirect based on role
+            const redirectPath = data.data.user.role === 'admin' ? '/admin' : '/';
+            router.push(redirectPath);
+          }
         }
       } else {
         const error = await response.json();

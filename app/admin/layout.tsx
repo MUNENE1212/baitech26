@@ -33,8 +33,35 @@ export default function AdminLayout({
     const checkAuth = () => {
       const token = localStorage.getItem('token')
       const userRole = localStorage.getItem('userRole')
+      const userStr = localStorage.getItem('user')
 
-      if (!token || userRole !== 'admin') {
+      // Check if token exists
+      if (!token) {
+        router.push('/login?redirect=/admin')
+        return
+      }
+
+      // Check if user data exists
+      if (!userStr) {
+        router.push('/login?redirect=/admin')
+        return
+      }
+
+      // Check if user role is admin
+      if (userRole !== 'admin') {
+        router.push('/')
+        return
+      }
+
+      // Validate user data
+      try {
+        const user = JSON.parse(userStr)
+        if (!user || user.role !== 'admin') {
+          router.push('/login?redirect=/admin')
+          return
+        }
+      } catch (error) {
+        console.error('Invalid user data:', error)
         router.push('/login?redirect=/admin')
         return
       }
@@ -47,7 +74,9 @@ export default function AdminLayout({
   }, [router])
 
   const handleLogout = () => {
+    // Clear all authentication data
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
     localStorage.removeItem('userRole')
     router.push('/login')
   }
