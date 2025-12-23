@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [showPassword, setShowPassword] = useState(false)
@@ -213,5 +213,18 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Default page component with Suspense boundary
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
