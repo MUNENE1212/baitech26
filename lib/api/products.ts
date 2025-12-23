@@ -70,8 +70,13 @@ export async function getAllProducts(): Promise<Product[]> {
 
     console.log('getAllProducts API response:', responseData)
 
-    // Handle the actual response structure: { products: [...], pagination: {...} }
-    return responseData.products || []
+    // Handle both cached and fresh response structures
+    // Fresh: { products: [...], pagination: {...} }
+    // Cached: { success: true, data: { products: [...], pagination: {...} }, cached: true }
+    if (Array.isArray(responseData)) {
+      return responseData
+    }
+    return responseData.data?.products || responseData.products || []
   } catch (error) {
     console.error('Failed to fetch all products:', error)
     return []

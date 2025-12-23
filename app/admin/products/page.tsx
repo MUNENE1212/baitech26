@@ -83,13 +83,15 @@ const fetchProducts = async () => {
 
       console.log('Products API response:', responseData)
 
-      // Handle the actual response structure: { success: true, data: { products: [...], pagination: {...} } }
+      // Handle both cached and fresh response structures
+      // Fresh: { products: [...], pagination: {...} }
+      // Cached: { success: true, data: { products: [...], pagination: {...} }, cached: true }
       if (responseData.success && responseData.data) {
         setProducts(responseData.data.products || [])
       } else {
-        // Fallback for different response structures
-        const productsData = responseData.data || responseData
-        setProducts(Array.isArray(productsData) ? productsData : (productsData.products || []))
+        // Handle both direct array and nested products structure
+        const productsData = responseData.data?.products || responseData.products || responseData
+        setProducts(Array.isArray(productsData) ? productsData : [])
       }
     } catch (err) {
       console.error('Error fetching products:', err)

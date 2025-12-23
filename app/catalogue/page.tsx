@@ -33,8 +33,12 @@ function CatalogueContent() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/products`)
         const data = await response.json()
         console.log('Catalogue page API response:', data)
-        // Handle the actual API response structure: { products: [...], pagination: {...} }
-        const productsData = Array.isArray(data) ? data : (data.products || [])
+        // Handle both cached and fresh response structures
+        // Fresh: { products: [...], pagination: {...} }
+        // Cached: { success: true, data: { products: [...], pagination: {...} }, cached: true }
+        const productsData = Array.isArray(data)
+          ? data
+          : (data.data?.products || data.products || [])
         console.log('Products extracted:', productsData.length, productsData)
         setProducts(productsData)
         setFilteredProducts(productsData)
