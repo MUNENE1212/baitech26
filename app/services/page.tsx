@@ -30,9 +30,21 @@ function ServicesContent() {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
         const response = await fetch(`${apiUrl}/api/services`)
         const data = await response.json()
-        // API returns array directly
-        setServices(Array.isArray(data) ? data : [])
-        setFilteredServices(Array.isArray(data) ? data : [])
+
+        // Handle both cached and fresh response structures
+        // Fresh: { services: [...] } or just [...]
+        // Cached: { success: true, data: { services: [...] } }
+        let servicesData = []
+        if (Array.isArray(data)) {
+          servicesData = data
+        } else if (data.data?.services) {
+          servicesData = data.data.services
+        } else if (data.services) {
+          servicesData = data.services
+        }
+
+        setServices(servicesData)
+        setFilteredServices(servicesData)
       } catch (error) {
         console.error('Failed to fetch services:', error)
         setServices([])

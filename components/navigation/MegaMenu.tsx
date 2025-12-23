@@ -26,13 +26,22 @@ export function MegaMenu({ isOpen, type, onClose }: MegaMenuProps) {
         const result = await response.json()
 
         if (type === 'products') {
-          setData(result.products || [])
+          // Handle both cached and fresh response structures
+          // Fresh: { products: [...], pagination: {...} }
+          // Cached: { success: true, data: { products: [...] }, cached: true }
+          if (Array.isArray(result)) {
+            setData(result)
+          } else {
+            setData(result.data?.products || result.products || [])
+          }
         } else {
           // Safely check if result exists and has services array
           if (result && Array.isArray(result.services)) {
             setData(result.services)
           } else if (result && Array.isArray(result)) {
             setData(result)
+          } else if (result?.data?.services) {
+            setData(result.data.services)
           } else {
             // Fallback: try to access services array directly
             setData(Array.isArray(result) ? result : [])
