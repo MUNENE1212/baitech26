@@ -55,7 +55,7 @@ export default function ServicesPage() {
     try {
       console.log('📡 Fetching services...')
       setLoading(true)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
       const token = localStorage.getItem('token')
 
       console.log('🔐 Fetching services with token:', token ? 'Found' : 'NOT FOUND')
@@ -98,7 +98,7 @@ export default function ServicesPage() {
 
     try {
       const token = localStorage.getItem('token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
 
       console.log('🔑 Token:', token ? 'Found' : 'NOT FOUND')
       console.log('🌐 API URL:', apiUrl)
@@ -169,7 +169,7 @@ export default function ServicesPage() {
 
     try {
       const token = localStorage.getItem('token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
       const serviceId = service.service_id || service.id
 
       const response = await fetch(`${apiUrl}/api/services/${serviceId}`, {

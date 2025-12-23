@@ -48,7 +48,7 @@ export function ServiceHighlight({
   const fetchServices = async () => {
     try {
       setLoading(true)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
       const response = await fetch(`${apiUrl}/api/services?limit=${maxServices}`)
 
       if (!response.ok) {

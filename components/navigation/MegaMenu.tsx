@@ -20,7 +20,7 @@ export function MegaMenu({ isOpen, type, onClose }: MegaMenuProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
         const endpoint = type === 'products' ? '/api/products' : '/api/services'
         const response = await fetch(`${apiUrl}${endpoint}`)
         const result = await response.json()

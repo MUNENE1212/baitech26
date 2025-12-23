@@ -39,7 +39,7 @@ export function ProductShowcase({
   const fetchProducts = async () => {
     try {
       setLoading(true)
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
       const response = await fetch(`${apiUrl}/api/products`)
 
       if (!response.ok) {

@@ -22,7 +22,7 @@ export function CategorySelectionModal() {
   useEffect(() => {
     async function fetchServices() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
         const response = await fetch(`${apiUrl}/api/services`)
         const data = await response.json()
         const servicesData = Array.isArray(data) ? data : []

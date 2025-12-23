@@ -41,7 +41,7 @@ export default function UsersPage() {
     try {
       setLoading(true)
       const token = localStorage.getItem('token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
 
       const response = await fetch(`${apiUrl}/users/`, {
         headers: {
@@ -68,7 +68,7 @@ export default function UsersPage() {
 
     try {
       const token = localStorage.getItem('token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
 
       const response = await fetch(`${apiUrl}/api/admin/users/${userId}`, {
         method: 'DELETE',
@@ -105,7 +105,7 @@ export default function UsersPage() {
 
     try {
       const token = localStorage.getItem('token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
 
       const formData = new FormData()
       formData.append('role', newRole.toLowerCase())

@@ -72,7 +72,7 @@ export function SimpleImageUpload({
 
     try {
       const token = localStorage.getItem('token')
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
 
       // Create FormData
       const formData = new FormData()

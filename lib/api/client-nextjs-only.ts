@@ -29,7 +29,8 @@ export class NextJsApiClient {
 
   constructor() {
     // Exclusively use Next.js API routes
-    let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+    // Use relative path for production (works with reverse proxy)
+    let baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
 
     // Ensure baseUrl ends with /api for Next.js API routes
     if (!baseUrl.endsWith('/api')) {
