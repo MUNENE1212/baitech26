@@ -84,8 +84,10 @@ export class NextJsApiClient {
       'Content-Type': 'application/json',
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    // Always get fresh token from localStorage
+    const currentToken = this.getToken();
+    if (currentToken) {
+      headers['Authorization'] = `Bearer ${currentToken}`;
     }
 
     return headers;
