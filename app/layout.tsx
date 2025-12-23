@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google'
 import { ToasterProvider } from '@/components/providers/ToasterProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt'
 import { DEFAULT_METADATA, STRUCTURED_DATA } from '@/lib/seo'
 import { getPromotionStructuredData, getPromotionMetadata, PROMO_KEYWORDS } from '@/lib/promo-seo'
 import { StickyPromoBanner } from '@/components/promotions/StickyPromoBanner'
@@ -42,14 +43,15 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo-sm.png', sizes: '192x192', type: 'image/png' },
+      { url: '/logo-md.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/logo-md.png', sizes: '512x512', type: 'image/png' },
     ],
   },
-  manifest: '/site.webmanifest',
+  manifest: '/manifest.json',
 }
 
 export default function RootLayout({
@@ -106,6 +108,8 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <ToasterProvider />
+        {/* PWA Install Prompt */}
+        <PWAInstallPrompt />
         {/* Sticky Side Banner */}
         <StickyPromoBanner />
       </body>
