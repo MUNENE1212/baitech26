@@ -10,6 +10,7 @@ RUN npm ci
 # Stage for building the application
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 COPY . .
 RUN npm run build
 
